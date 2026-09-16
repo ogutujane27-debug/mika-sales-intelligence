@@ -7,7 +7,7 @@ import io
 # 1. ENTERPRISE SUITE INITIALIZATION
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
-# Premium CSS for clean animations and layout optimization
+# Premium CSS parsing for fluid animations and premium executive chat layout
 st.markdown("""
     <style>
     @keyframes slideUp { 
@@ -16,18 +16,16 @@ st.markdown("""
     }
     .block-container { padding-top: 1rem; padding-bottom: 1rem; }
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
+    
+    /* Green Run/Execute button theme */
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 50px;
-        font-size: 16px !important;
+        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
     }
-    .stDownloadButton>button {
-        background-color: #007bff !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(0,123,255,0.25); border-radius: 6px !important; width: 100%; height: 45px;
-    }
-    /* Style for clear separation of chat speech bubbles */
-    .user-bubble { background-color: #e2f0d9; padding: 10px; border-radius: 10px; margin-bottom: 5px; }
-    .mika-bubble { background-color: #f1f1f1; padding: 10px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #28a745; }
+    
+    /* Speech bubble styles for history panel */
+    .user-bubble { background-color: #e2f0d9; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; }
+    .mika-bubble { background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -80,7 +78,7 @@ text = {
         "ai_idle": "💡 Local n8n Simulator Core: Idle. Pipeline waiting for execution command.",
         "chat_header": "💬 Ask MIKA — Limitless Market Intelligence Chatbot",
         "chat_desc": "Ask any business, competitor (Samsung, LG, Ramtons, Hisense, Alyassin), supply chain, stockout, or market query related to Kenya.",
-        "chat_ph": "Type your query here in any language..."
+        "chat_ph": "Type your query here or choose a top search below..."
     },
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
@@ -96,7 +94,7 @@ text = {
         "ai_idle": "💡 Seva ya n8n Simulator iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
         "chat_header": "💬 Uliza MIKA — Chatbot Huru ya Akili ya Soko",
         "chat_desc": "Uliza swali lolote la kibiashara, washindani (Samsung, LG, Ramtons, Hisense), stoo kupungua, au mwenendo wa soko la Kenya.",
-        "chat_ph": "Andika swali lako hapa kwa lugha yoyote..."
+        "chat_ph": "Andika swali lako hapa au chagua maswali maarufu chini..."
     }
 }
 
@@ -142,20 +140,17 @@ if page == "📈 Executive Overview & Pipeline":
     
     st.write("---")
     raw_briefing_text = (
-        "MIKA GLOBAL EXECUTIVE EXECUTIVE SUMMARY\n\n"
+        "MIKA GLOBAL EXECUTIVE SUMMARY\n\n"
         "1. FINANCIAL AUDIT CONTROLS:\n"
         "- Total Verified Operational Revenue Log: KSh 2,888,966,390.88\n"
-        "- Official System Sales Target Source: KSh 1,684,717,184.70\n"
-        "Note: These financial pools belong to separate recording streams and must NOT be added together.\n\n"
-        "2. RISK EXPOSURE & DATA QUALITY ASSESSMENT:\n"
-        "- Market Concentration: Nairobi Region dominates the landscape at KSh 1.43B (49.46% of total revenue).\n"
-        "- Data Quality Exposure: 89.87% (KSh 2.60B) of transaction lines currently lack stockist data tags.\n\n"
-        "3. WHAT-IF SCENARIO STRATEGIC VALUE:\n"
-        "- Implementing an ingestion tracking logic for Nairobi's pool immediately cuts operational credit risk exposure by KSh 42.9 Million and optimizes cash liquidity reserves."
+        "- Official System Sales Target Source: KSh 1,684,717,184.70\n\n"
+        "2. RISK EXPOSURE ASSESSMENT:\n"
+        "- Market Concentration: Nairobi Region dominates at KSh 1.43B (49.46% of total revenue).\n"
+        "- Data Quality Exposure: 89.87% (KSh 2.60B) of transaction lines currently lack stockist data tags."
     )
     
     st.download_button(
-        label="📥 Download Executive Briefing (TXT Report)" if lang == "English" else "📥 Pakua Muhtasari wa Ripoti (TXT)",
+        label="📥 Download Executive Briefing" if lang == "English" else "📥 Pakua Muhtasari wa Ripoti",
         data=raw_briefing_text,
         file_name="MIKA_Executive_Management_Briefing.txt",
         mime="text/plain"
@@ -163,7 +158,7 @@ if page == "📈 Executive Overview & Pipeline":
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN AI REPORT GENERATOR
+# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
 # ==========================================
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
@@ -184,7 +179,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             client = Groq()
             region_summary = df_region.to_string(index=False)
             
-            prompt_instructions = f"Perform an executive-level audit business analysis on this corporate dataset for MIKA sales managers. Total Revenue: KSh 2.88B. Official Target: KSh 1.68B. Traceability Risk: 89.87%% lack stockist data. Regional Log: {region_summary}. Do NOT mention Phase 16 or Phase 18! Output must be in {lang}. Format with three headers: 1. MANAGEMENT THE WHYS, 2. WHAT-IF RISK MITIGATION, 3. STRATEGIC AUDIT ACTIONS."
+            prompt_instructions = f"Perform an executive-level audit business analysis on this corporate dataset for MIKA sales managers. Total Revenue: KSh 2.88B. Official Target: KSh 1.68B. Traceability Risk: 89.87%% lack stockist data. Regional Log: {region_summary}. Output must be in {lang}. Format with three headers: 1. MANAGEMENT THE WHYS, 2. WHAT-IF RISK MITIGATION, 3. STRATEGIC AUDIT ACTIONS."
             
             completion = client.chat.completions.create(
                 model="openai/gpt-oss-120b",
@@ -194,7 +189,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            ai_report = completion.choices[0].message.content
+            ai_report = completion.choices.message.content
             st.markdown(ai_report)
             
             st.write("---")
@@ -206,82 +201,6 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 "The weekly sales data audit has been compiled successfully via automation.\n\n"
                 "💰 *Key Portfolio Performance:*\n"
                 "- Total Verified Revenue: KSh 2.89 Billion.\n"
-                "- Nairobi Hub Market Share: 49.46% (Dominant Sub-Region).\n\n"
+                "- Nairobi Hub Market Share: 49.46%.\n\n"
                 "⚠️ *Critical Data Tracking Alert:*\n"
-                "- 89.87% (KSh 2.60B) of transaction lines currently lack identified stockist data. This requires immediate automation logic mitigation to secure tracing controls.\n\n"
-                "🌐 Deployed Control Center: https://streamlit.app"
-            )
-            
-            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
-            
-        except Exception as e:
-            st.error(f"AI Server Connection Error: {e}")
-    else:
-        st.info(text[lang]["ai_idle"])
-
-
-# ==========================================
-# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT (WITH EMOJI CONTROL PANEL)
-# ==========================================
-else:
-    st.subheader(text[lang]["chat_header"])
-    st.write(text[lang]["chat_desc"])
-    
-    # 🧠 CHAT HISTORY BUFFER INITIALIZATION
-    if "chat_history" not in st.session_state:
-        st.session_state["chat_history"] = []
-        
-    # 🗑️ THE TRASHBIN CONTROL NODE
-    col_clear, col_space = st.columns([1, 4])
-    with col_clear:
-        if st.button("🗑️ Clear Chat" if lang == "English" else "🗑️ Futa Chat"):
-            st.session_state["chat_history"] = []
-            st.rerun()
-
-    st.write("---")
-    
-    # 📊 TOP SEARCHES EMOJI PANEL
-    st.write("📌 **Top Searches / Maswali Maarufu:**" if lang == "English" else "📌 **Maswali Maarufu ya Bodi:**")
-    c_btn1, c_btn2 = st.columns(2)
-    suggested_query = ""
-    with c_btn1:
-        if st.button("🌍 Nairobi Revenue Hub Performance"):
-            suggested_query = "Analyze the Nairobi region performance and its 49.46% market share concentration."
-    with c_btn2:
-        if st.button("🥊 Samsung & Ramtons Competitor Gaps"):
-            suggested_query = "What are Samsung and Ramtons doing well in Kenya electronics market compared to MIKA?"
-
-    # Text input configuration with session state bypass
-    user_query = st.text_input(text[lang]["chat_ph"], value=suggested_query, key="global_market_chatbot")
-    
-    if user_query:
-        with st.spinner("MIKA Core Engine is scanning market variables..."):
-            try:
-                client = Groq()
-                
-                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_query}. Respond fully and professionally in language: {lang}."
-                
-                completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                ai_response = completion.choices[0].message.content
-                
-                # Append recent exchanges to list arrays
-                st.session_state["chat_history"].append({"role": "user", "text": user_query})
-                st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
-                st.rerun()
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")
-
-    # ⏳ VISUAL HISTORY TRACKER SECTION (Rendered at the bottom)
-    if st.session_state["chat_history"]:
-        st.write("---")
-        st.write("⏳ **Conversation Logs / Kumbukumbu ya Mazungumzo:**" if lang == "English" else "⏳ **Kumbukumbu ya Mazungumzo ya Siri:**")
-        for chat in st.session_state["chat_history"]:
-            if chat["role"] == "user":
-                st.markdown(f'<div class="user-bubble"><b>👤 You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+                "- 89.87% lack identified stockist data. Requires immediate automation controls.\n\n"

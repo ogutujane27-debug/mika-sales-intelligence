@@ -69,7 +69,7 @@ text = {
         "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
         "m1": "📦 Total Verified Revenue",
         "m2": "📈 Official Source Target",
-        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of sales lack stockist parameters. This is a tracking concern, not an immediate financial loss.",
+        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data. This is a tracking concern, not an immediate financial loss.",
         "chart1": "🌍 Regional Market Share & Contribution",
         "chart2": "💳 Credit Terms & Liquidity Exposure Pipeline",
         "ai_header": "🧠 Simulated n8n Automation & Audit Engine",
@@ -203,4 +203,3 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 "- Total Verified Revenue: KSh 2.89 Billion.\n"
                 "- Nairobi Hub Market Share: 49.46%.\n\n"
                 "⚠️ *Critical Data Tracking Alert:*\n"
-                "- 89.87% lack identified stockist data. Requires immediate automation controls.\n\n"

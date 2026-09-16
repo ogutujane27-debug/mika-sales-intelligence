@@ -3,34 +3,14 @@ import pandas as pd
 import io
 
 # =====================================================================
-# 1. CORE SYSTEM SETUP (Must be at the very top, exactly once)
+# 1. SYSTEM SETUP
 # =====================================================================
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
-# Premium CSS for fluid animations and a clean Google-Style Sidebar layout
+# Premium CSS for Google-style layout and buttons
 st.markdown("""
     <style>
-    @keyframes slideUp { 
-        0% { opacity: 0; transform: translateY(15px); } 
-        100% { opacity: 1; transform: translateY(0); } 
-    }
-    .block-container { padding-top: 1rem; padding-bottom: 1rem; }
-    .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
-    
-    /* Green Run/Execute button theme */
-    .stButton>button { 
-        background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
-    }
-    .stDownloadButton>button {
-        background-color: #007bff !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(0,123,255,0.25); border-radius: 6px !important; width: 100%; height: 45px;
-    }
-    
-    /* Hides the default Streamlit navigation to create a custom feel */
     [data-testid="stSidebarNav"] {display: none;}
-    
-    /* Premium typography styling for your brand-new sidebar layout */
     .sidebar-title {
         font-size: 24px;
         font-weight: bold;
@@ -45,11 +25,18 @@ st.markdown("""
         margin-bottom: 10px;
         font-weight: 500;
     }
+    /* Green Run/Execute button theme */
+    .stButton>button { 
+        background-color: #28a745 !important; color: white !important; font-weight: bold !important;
+        border-radius: 6px !important; width: 100%; height: 45px;
+    }
+    .user-bubble { background-color: #e2f0d9; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; }
+    .mika-bubble { background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; }
     </style>
 """, unsafe_allow_html=True)
 
 # =====================================================================
-# 2. BUSINESS DATA REPOSITORIES
+# 2. BUSINESS DATA
 # =====================================================================
 region_csv = """Region Name,Total_Sales,Outlet_Count,Pct_of_Total
 NAIROBI REGION,1429021702.88,162,49.46
@@ -70,20 +57,19 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
-# Initialize Memory Tracking for user histories
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = [
-        {"text": "how to use postman tool on my l..."},
-        {"text": "can you outline the differences b..."},
-        {"text": "what's up i'm not getting any fee..."}
+        {"text": "how to use postman tool on my local pc"},
+        {"text": "can you outline the differences between GET and POST"},
+        {"text": "what's up i'm not getting any feedback"}
     ]
 
-# Multi-lingual Dictionary configuration 
+# Lugha / Translations
 text_dict = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
         "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
-        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data. This is a tracking concern, not an immediate financial loss.",
+        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data.",
         "chat_title": "Recent Chats"
     },
     "Kiswahili": {
@@ -95,43 +81,35 @@ text_dict = {
 }
 
 # =====================================================================
-# 3. GOOGLE-STYLE CUSTOM SIDEBAR
+# 3. GOOGLE-STYLE SIDEBAR
 # =====================================================================
 with st.sidebar:
-    # Google Layout Brand Replacement
     st.markdown('<div class="sidebar-title">🤖 Mika Chat Bot</div>', unsafe_allow_html=True)
     
-    # Simple Language Controller Switch
     lang = st.radio("🌐 Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
-    # Modern Action Operations Buttons
     if st.button("➕ Mazungumzo mapya" if lang == "Kiswahili" else "➕ New Conversation", use_container_width=True):
         st.session_state["chat_history"] = []
         st.rerun()
         
     if st.button("🔍 Tafuta mazungumzo" if lang == "Kiswahili" else "🔍 Search Chats", use_container_width=True):
-        st.toast("Sehemu ya utafutaji inakuja hivi karibuni!")
+        st.toast("Utafutaji unakuja hivi karibuni!")
     
     st.write("---")
     
-    # Active View Configurations Selector
     page = st.radio(
         "Select Dashboard View:" if lang == "English" else "Chagua Mtazamo:",
         ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
     )
     st.write("---")
     
-    # ⏳ GOOGLE BROWSING HISTORY LOGS ARCHIVE
     st.markdown(f'<div class="sidebar-section-title">{text_dict[lang]["chat_title"]}</div>', unsafe_allow_html=True)
     
-    if not st.session_state["chat_history"]:
-        st.caption("No recent conversations." if lang == "English" else "Hakuna mazungumzo ya hivi karibuni.")
-    else:
-        # Loop through log items neatly without loading yellow paper indicators
-        for idx, chat in enumerate(st.session_state["chat_history"]):
-            if st.button(f"💬 {chat['text']}", key=f"nav_log_{idx}", use_container_width=True):
-                st.toast(f"Selected: {chat['text']}")
+    for idx, chat in enumerate(st.session_state["chat_history"]):
+        short_text = chat["text"][:28] + "..." if len(chat["text"]) > 28 else chat["text"]
+        if st.button(f"💬 {short_text}", key=f"nav_log_{idx}", use_container_width=True):
+            st.toast(f"Ulichagua: {chat['text']}")
                 
     st.write("---")
     if st.button("🗑️ Clear History" if lang == "English" else "🗑️ Safisha Kumbukumbu", key="clear_logs_action"):
@@ -139,12 +117,46 @@ with st.sidebar:
         st.rerun()
 
 # =====================================================================
-# 4. PRIMARY MAIN DISPLAY PANEL CONTENT
+# 4. MAIN BODY DISPLAY SWITCHING
 # =====================================================================
 st.title(text_dict[lang]["title"])
 st.caption(text_dict[lang]["desc"])
 st.warning(text_dict[lang]["risk_banner"])
+st.write("---")
 
-# Secure isolated dataset output frame rendering
-st.subheader("📊 Regional Market Share & Contribution")
-st.dataframe(df_region, use_container_width=True, hide_index=True)
+# --- PAGE 1: EXECUTIVE OVERVIEW ---
+if page == "📈 Executive Overview & Pipeline":
+    st.subheader("📊 Regional Market Share & Contribution")
+    st.dataframe(df_region, use_container_width=True, hide_index=True)
+    
+    st.subheader("💳 Credit Terms & Liquidity Exposure Pipeline")
+    st.dataframe(df_payment, use_container_width=True, hide_index=True)
+
+# --- PAGE 2: N8N CORE AUTOMATION ---
+elif page == "🧠 Simulated n8n Orchestration Core":
+    st.subheader("🧠 n8n Automation Engine Pipeline")
+    st.write("Welcome to the automation layer. Here you can execute backend workflows.")
+    
+    if st.button("🚀 Trigger Local n8n Orchestration Pipeline"):
+        st.success("✅ n8n Pipeline executed successfully! Data cleaned and loaded into memory.")
+        st.info("Webhook captured on localhost:5678. Status: 200 OK")
+    else:
+        st.info("💡 Local n8n Simulator Core: Idle. Waiting for trigger instruction.")
+
+# --- PAGE 3: ASK MIKA CHATBOT ---
+elif page == "💬 Ask MIKA Market Chatbot":
+    st.subheader("💬 Ask MIKA — Market Intelligence Chatbot")
+    st.write("Ask any business or market query related to Kenya.")
+    
+    user_query = st.text_input("Type your question here / Andika swali lako hapa:", key="user_question_input")
+    
+    if user_query:
+        # Save to sidebar history dynamically
+        st.session_state["chat_history"].insert(0, {"text": user_query})
+        
+        # Display response bubbles
+        st.markdown(f'<div class="user-bubble"><b>You:</b> {user_query}</div>', unsafe_allow_html=True)
+        
+        # Simple local AI logic for presentation
+        response = f"Hello! I am MIKA. I processed your request regarding '{user_query}'. Our top market is NAIROBI REGION with 49.46% of total sales."
+        st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {response}</div>', unsafe_allow_html=True)

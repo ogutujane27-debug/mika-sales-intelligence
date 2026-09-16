@@ -164,7 +164,6 @@ if page == "📈 Executive Overview & Pipeline":
 
     st.write("---")
     st.subheader("📁 Verified Master Region Data Register")
-        st.dataframe(df_region, use_container_width=True, hide_index=True)
     
     st.write("---")
     raw_briefing_text = (

@@ -162,7 +162,6 @@ elif page == "🧠 Real-Time AI Management Brain":
                 3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
                 """
                 
-                # FIXED MODEL NAME FOR MASSIVE PERFORMANCE LOGS
                 completion = client.chat.completions.create(
                     model="llama3-8b-8192",
                     messages=[{"role": "user", "content": prompt_instructions}]
@@ -170,9 +169,9 @@ elif page == "🧠 Real-Time AI Management Brain":
                 
                 st.success("Analysis Successfully Compiled!")
                 st.write("---")
-                st.markdown(completion.choices[0].message.content)
+                st.markdown(completion.choices.message.content)
                 
-                        except Exception as e:
+            except Exception as e:
                 st.error(f"AI Server Connection Error: {e}")
     else:
         st.info(text[lang]["ai_idle"])

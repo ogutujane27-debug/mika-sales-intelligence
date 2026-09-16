@@ -22,8 +22,10 @@ st.markdown("""
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
         box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
     }
-    
-    /* Speech bubble styles for history panel */
+    .stDownloadButton>button {
+        background-color: #007bff !important; color: white !important; font-weight: bold !important;
+        box-shadow: 0 4px 15px rgba(0,123,255,0.25); border-radius: 6px !important; width: 100%; height: 45px;
+    }
     .user-bubble { background-color: #e2f0d9; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; font-family: sans-serif; }
     .mika-bubble { background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; font-family: sans-serif; }
     </style>
@@ -49,7 +51,11 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
-# 3. SIDEBAR MULTI-PAGE ENGINE
+# Initialize Memory Buffer globally for Sidebar History Tracking
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = []
+
+# 3. SIDEBAR MULTI-PAGE ENGINE & LIVE CHAT HISTORY SIDEBAR
 with st.sidebar:
     st.header("⚡ Command Center")
     lang = st.radio("🌐 Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
@@ -60,6 +66,28 @@ with st.sidebar:
         ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
     )
     st.write("---")
+    
+    # ⏳ DYNAMIC SIDEBAR HISTORY ENGINE (Looks exactly like Google Browser logs!)
+    if page == "💬 Ask MIKA Market Chatbot":
+        st.subheader("📝 Ya hivi majuzi" if lang == "Kiswahili" else "📝 Recent Chats")
+        
+        # 🗑️ Micro-Erase Clear Button inside the Sidebar layout
+        if st.button("🗑️ Clear History" if lang == "English" else "🗑️ Safisha Kumbukumbu"):
+            st.session_state["chat_history"] = []
+            st.rerun()
+            
+        st.write("---")
+        if not st.session_state["chat_history"]:
+            st.caption("No recent conversations." if lang == "English" else "Hakuna mazungumzo ya hivi karibuni.")
+        else:
+            # Displays user's previous questions cleanly on the sidebar rows
+            for idx, chat in enumerate(st.session_state["chat_history"]):
+                if chat["role"] == "user":
+                    # Truncate text block to keep it clean and professional
+                    short_text = chat["text"][:28] + "..." if len(chat["text"]) > 28 else chat["text"]
+                    st.caption(f"🔍 {short_text}")
+        st.write("---")
+        
     st.caption("MIKA Automation Infrastructure Layer Active.")
 
 # Localized app dictionary strings
@@ -78,7 +106,7 @@ text = {
         "ai_idle": "💡 Local n8n Simulator Core: Idle. Pipeline waiting for execution command.",
         "chat_header": "💬 Ask MIKA — Limitless Market Intelligence Chatbot",
         "chat_desc": "Ask any business, competitor (Samsung, LG, Ramtons, Hisense, Alyassin), supply chain, stockout, or market query related to Kenya.",
-        "chat_ph": "Type your query here or choose a top search below..."
+        "chat_ph": "Type your query here and press enter..."
     },
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
@@ -94,7 +122,7 @@ text = {
         "ai_idle": "💡 Seva ya n8n Simulator iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
         "chat_header": "💬 Uliza MIKA — Chatbot Huru ya Akili ya Soko",
         "chat_desc": "Uliza swali lolote la kibiashara, washindani (Samsung, LG, Ramtons, Hisense), stoo kupungua, au mwenendo wa soko la Kenya.",
-        "chat_ph": "Andika swali lako hapa au chagua maswali maarufu chini..."
+        "chat_ph": "Andika swali lako hapa kisha ubonyeze enter..."
     }
 }
 
@@ -179,97 +207,3 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             client = Groq()
             region_summary = df_region.to_string(index=False)
             
-            prompt_instructions = f"Perform an executive-level audit business analysis on this corporate dataset for MIKA sales managers. Total Revenue: KSh 2.88B. Official Target: KSh 1.68B. Traceability Risk: 89.87%% lack stockist data. Regional Log: {region_summary}. Output must be in {lang}. Format with three headers: 1. MANAGEMENT THE WHYS, 2. WHAT-IF RISK MITIGATION, 3. STRATEGIC AUDIT ACTIONS."
-            
-            completion = client.chat.completions.create(
-                model="openai/gpt-oss-120b",
-                messages=[{"role": "user", "content": prompt_instructions}]
-            )
-            
-            status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
-            st.write("---")
-            
-            # FIXED INDEX: Tumeongeza [0] hapa kumaliza kosa la list object kabisa!
-            ai_report = completion.choices[0].message.content
-            st.markdown(ai_report)
-            
-            st.write("---")
-            st.subheader("📱 Automated Management Broadcast Alert Payload")
-            
-            board_alert = (
-                "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
-                "Dear Directors,\n"
-                "The weekly sales data audit has been compiled successfully via automation.\n\n"
-                "💰 *Key Portfolio Performance:*\n"
-                "- Total Verified Revenue: KSh 2.89 Billion.\n"
-                "- Nairobi Hub Market Share: 49.46%.\n\n"
-                "⚠️ *Critical Data Tracking Alert:*\n"
-                "- 89.87% lack identified stockist data. Requires immediate automation controls.\n\n"
-                "🌐 Deployed Control Center: https://streamlit.app"
-            )
-            
-            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
-            
-        except Exception as e:
-            st.error(f"AI Server Connection Error: {e}")
-    else:
-        st.info(text[lang]["ai_idle"])
-
-
-# ==========================================
-# PAGE VIEW 3: DYNAMIC ASK MIKA MARKET CHATBOT (CLEAN NO-HISTORY INTERFACE)
-# ==========================================
-else:
-    st.subheader(text[lang]["chat_header"])
-    st.write(text[lang]["chat_desc"])
-    st.write("---")
-    
-    # 📌 TOP SEARCHES / MASWALI YA HARAKA YAMERUDI PALEPALE BILA KUBADILIKA
-    st.write("💡 **Top Searches / Maswali Haraka:**" if lang == "English" else "💡 **Maswali Maarufu ya Wakurugenzi:**")
-    c_ts1, c_ts2 = st.columns(2)
-    
-    # Target values state triggers
-    if "current_query" not in st.session_state:
-        st.session_state["current_query"] = ""
-        
-    with c_ts1:
-        if st.button("🌍 Nairobi Market Share & Performance Report"):
-            st.session_state["current_query"] = "Analyze the Nairobi region performance and its 49.46% market share concentration."
-            
-    with c_ts2:
-        if st.button("🥊 Samsung vs Ramtons Competitor Strategy Analysis"):
-            st.session_state["current_query"] = "What are Samsung and Ramtons doing well in Kenya electronics market compared to MIKA?"
-
-    st.write("---")
-
-    # 🛒 KITUFE CHAKO HALISI CHA '💬 Send Query' KIMERUDI KAMA ULIVYOTAKA!
-    with st.form(key="mika_clean_chat_form"):
-        user_input_field = st.text_input(
-            text[lang]["chat_ph"], 
-            value=st.session_state["current_query"]
-        )
-        submit_chat_button = st.form_submit_button(
-            label="💬 Send Query" if lang == "English" else "💬 Tuma Swali"
-        )
-
-    if submit_chat_button and user_input_field:
-        st.session_state["current_query"] = "" # Consume slot values
-        with st.spinner("MIKA Core Engine is scanning market variables..."):
-            try:
-                client = Groq()
-                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors in Kenya electronics market: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_input_field}. Respond fully and professionally in language: {lang}."
-                
-                completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                # FIXED INDEX: Tumeongeza [0] na hapa pia kufuta kabisa kosa la list object!
-                ai_response = completion.choices[0].message.content
-                
-                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
-                st.write("---")
-                st.markdown(ai_response)
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")

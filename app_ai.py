@@ -241,3 +241,5 @@ elif page == "💬 Ask MIKA Market Chatbot":
         bot_response = f"Analyzing raw logs for your query: '{query_box}'. Our baseline records confirm Nairobi Region handles 49.46% of transaction footprints."
         st.session_state["chat_history"].append({"role": "mika", "text": bot_response})
         st.rerun()
+    else:
+        pass

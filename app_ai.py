@@ -201,7 +201,16 @@ else:
                     f"LG Electronics (High brand equity), Ramtons (Aggressive pricing in Naivas/Quickmart), "
                     f"Hisense (Cooling tier), Alyassin (Rural footprints). "
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}."
-                )
+                ) # <--- HAPA NDIYO ALAMA YA FUNGA MABANO YA ) ILIYOKUWA IMESAHAULIKA!
                 
                 completion = client.chat.completions.create(
                     model="groq/compound",
+                    messages=[{"role": "user", "content": context_prompt}]
+                )
+                
+                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
+                st.write("---")
+                st.markdown(completion.choices[0].message.content)
+                
+            except Exception as e:
+                st.error(f"Chatbot Communication Failure: {e}")

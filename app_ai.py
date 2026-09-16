@@ -159,7 +159,7 @@ text_dict = {
         "ai_btn": "🚀 Washa n8n Pipeline ya Ndani",
         "ai_idle": "💡 Mfumo wa n8n: Hausumbuki. Unasubiri amri yako.",
         "chat_header": "💬 Uliza MIKA — Chatbot ya Soko la Kimataifa",
-        "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu wa bidhaa nchini Kenya.",
+        "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu vya bidhaa nchini Kenya.",
         "chat_ph": "Andika swali lako hapa na ubonyeze enter...",
         "chat_title": "Ya hivi majuzi"
     }
@@ -268,7 +268,7 @@ if page == "📈 Executive Overview & Pipeline":
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION OPERATION ---
+# --- VIEW 2: REAL N8N AUTOMATION ENGINE LINKED TO REAL IP ---
 if page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])
@@ -277,6 +277,11 @@ if page == "🧠 Simulated n8n Orchestration Core":
     
     if st.button(text_dict[lang]["ai_btn"], type="primary"):
         st.info(f"Firing outbound transactional payload parameters to n8n line at: {n8n_url}...")
+        
+        response_code = 0
+        response_text = ""
+        is_error = False
+        
         try:
             payload = {
                 "source": "streamlit_command_center",
@@ -284,7 +289,4 @@ if page == "🧠 Simulated n8n Orchestration Core":
                 "payment_matrix": payment_csv
             }
             response = requests.post(n8n_url, json=payload, timeout=8)
-            
-            # Kama mtandao uko sawa na n8n ikarudisha 200 OK
-            if response.status_code == 200:
-                st.success("✅ n8n Pipeline completed execution step successfully!")
+            response_code = response.status_code

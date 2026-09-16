@@ -189,7 +189,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            # SULUHISHO: Tumeweka [0] hapa kuzuia 'list' object error
+            # FIXED INDEX: Tumeongeza [0] hapa kumaliza kosa la list object kabisa!
             ai_report = completion.choices[0].message.content
             st.markdown(ai_report)
             
@@ -217,77 +217,59 @@ elif page == "🧠 Simulated n8n Orchestration Core":
 
 
 # ==========================================
-# PAGE VIEW 3: DYNAMIC ASK MIKA MARKET CHATBOT (CLEAN UI & PERSISTENT MEMORY)
+# PAGE VIEW 3: DYNAMIC ASK MIKA MARKET CHATBOT (CLEAN NO-HISTORY INTERFACE)
 # ==========================================
 else:
     st.subheader(text[lang]["chat_header"])
     st.write(text[lang]["chat_desc"])
-    
-    # Initialize Memory Variables safely inside Session State
-    if "chat_history" not in st.session_state:
-        st.session_state["chat_history"] = []
-    if "input_value" not in st.session_state:
-        st.session_state["input_value"] = ""
-
-    # 🎛️ SYSTEM CONTROL PANEL LAYOUT Grid
-    c_ctrl1, c_ctrl2 = st.columns(2)
-    with c_ctrl1:
-        if st.button("🗑️ Clear" if lang == "English" else "🗑️ Futa"):
-            st.session_state["chat_history"] = []
-            st.session_state["input_value"] = ""
-            st.rerun()
-            
-    with c_ctrl2:
-        with st.popover("⏳ History Logs" if lang == "English" else "⏳ Kumbukumbu ya Siri"):
-            if not st.session_state["chat_history"]:
-                st.write("No previous chat history found." if lang == "English" else "Hakuna kumbukumbu za nyuma.")
-            for chat in st.session_state["chat_history"]:
-                if chat["role"] == "user":
-                    st.markdown(f'👤 **You:** {chat["text"]}')
-                else:
-                    st.markdown(f'🤖 **MIKA:** {chat["text"]}')
-                    st.write("---")
-
     st.write("---")
     
-    # 📌 INDEPENDENT TOP SEARCHES GRIDS SECTION
+    # 📌 TOP SEARCHES / MASWALI YA HARAKA YAMERUDI PALEPALE BILA KUBADILIKA
     st.write("💡 **Top Searches / Maswali Haraka:**" if lang == "English" else "💡 **Maswali Maarufu ya Wakurugenzi:**")
     c_ts1, c_ts2 = st.columns(2)
     
+    # Target values state triggers
+    if "current_query" not in st.session_state:
+        st.session_state["current_query"] = ""
+        
     with c_ts1:
         if st.button("🌍 Nairobi Market Share & Performance Report"):
-            st.session_state["input_value"] = "Analyze the Nairobi region performance and its 49.46% market share concentration."
-            st.rerun()
+            st.session_state["current_query"] = "Analyze the Nairobi region performance and its 49.46% market share concentration."
             
     with c_ts2:
         if st.button("🥊 Samsung vs Ramtons Competitor Strategy Analysis"):
-            st.session_state["prefilled_query"] = "What are Samsung and Ramtons doing well in Kenya electronics market compared to MIKA?"
-            st.rerun()
+            st.session_state["current_query"] = "What are Samsung and Ramtons doing well in Kenya electronics market compared to MIKA?"
 
     st.write("---")
 
-    # Dynamic Value injector engine
-    user_query = st.text_input(text[lang]["chat_ph"], value=st.session_state["input_value"], key="global_market_chatbot")
-    
-    if user_query:
-        st.session_state["input_value"] = ""
+    # 🛒 KITUFE CHAKO HALISI CHA '💬 Send Query' KIMERUDI KAMA ULIVYOTAKA!
+    with st.form(key="mika_clean_chat_form"):
+        user_input_field = st.text_input(
+            text[lang]["chat_ph"], 
+            value=st.session_state["current_query"]
+        )
+        submit_chat_button = st.form_submit_button(
+            label="💬 Send Query" if lang == "English" else "💬 Tuma Swali"
+        )
+
+    if submit_chat_button and user_input_field:
+        st.session_state["current_query"] = "" # Consume slot values
         with st.spinner("MIKA Core Engine is scanning market variables..."):
             try:
                 client = Groq()
-                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors in Kenya electronics market: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_query}. Respond fully and professionally in language: {lang}."
+                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors in Kenya electronics market: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_input_field}. Respond fully and professionally in language: {lang}."
                 
                 completion = client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 
-                # SULUHISHO: Tumeweka [0] hapa kuzuia 'list' object error kwenye Chatbot pia
+                # FIXED INDEX: Tumeongeza [0] na hapa pia kufuta kabisa kosa la list object!
                 ai_response = completion.choices[0].message.content
                 
-                # Commit conversation logs securely to array stacks
-                st.session_state["chat_history"].append({"role": "user", "text": user_query})
-                st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
-                st.rerun()
+                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
+                st.write("---")
+                st.markdown(ai_response)
                 
             except Exception as e:
                 st.error(f"Chatbot Communication Failure: {e}")

@@ -238,8 +238,23 @@ elif page == "🧠 Simulated n8n Orchestration Core":
 elif page == "💬 Ask MIKA Market Chatbot":
     st.subheader("💬 Ask MIKA — Limitless Market Intelligence Chatbot")
     
-    # Onyesha mazungumzo yaliyohifadhiwa sequentially bila kurudia rrefresh errors
+    # Onyesha mazungumzo yaliyohifadhiwa sequentially bila kurefresha kimakosa
     for chat in st.session_state["chat_history"]:
         if chat["role"] == "user":
             st.markdown(f'<div class="chat-user-row"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
         else:
+            st.markdown(f'<div class="chat-mika-row"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+            
+    # Box la kisasa la kuchat chini kabisa
+    query_box = st.chat_input("Ask any business or competitor query here...")
+    if query_box:
+        # Hifadhi swali kwenye "Ya hivi majuzi" upande wa kushoto
+        if query_box not in st.session_state["search_logs"]:
+            st.session_state["search_logs"].insert(0, query_box[:28] + "...")
+            
+        st.session_state["chat_history"].append({"role": "user", "text": query_box})
+        
+        # Jibu moja la AI lililonyooka
+        bot_response = f"Analyzing raw logs for your query: '{query_box}'. Our baseline records confirm Nairobi Region handles 49.46% of transaction footprints."
+        st.session_state["chat_history"].append({"role": "mika", "text": bot_response})
+        st.rerun()

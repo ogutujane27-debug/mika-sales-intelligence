@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import io
-import requests  # Inahitajika kutuma Webhook halisi kwenye n8n
+import requests
+from groq import Groq  # Unganisho halisi la Groq AI layer
 
 # =====================================================================
 # 1. SYSTEM INITIALIZATION & GOOGLE SIDEBAR STYLE
@@ -14,7 +15,7 @@ st.markdown("""
     [data-testid="stSidebarNav"] {display: none;}
     .google-brand { font-size: 24px; font-weight: 500; color: #1a73e8; font-family: 'Google Sans', sans-serif; margin-bottom: 25px; padding-left: 8px; }
     .google-menu-item { font-size: 15px; color: #3c4043; padding: 8px 8px; display: flex; align-items: center; gap: 14px; }
-    .google-section-title { font-size: 13px; font-weight: 500; color: #70757a; margin-top: 25px; margin-bottom: 12px; padding-left: 8px; }
+    .google-section-title { font-size: 13px; font-weight: 500; color: #70757a; margin-top: 20px; margin-bottom: 10px; padding-left: 8px; }
     .google-history-item { font-size: 14px; color: #3c4043; padding: 6px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .chat-user-row { background-color: #e2f0d9; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; font-family: sans-serif; }
     .chat-mika-row { background-color: #f1f1f1; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #1a73e8; color: #222222; font-family: sans-serif; }
@@ -22,7 +23,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =====================================================================
-# 2. BUSINESS DATA REPOSITORIES
+# 2. REAL CORPORATE DATA MATRIX POOLS
 # =====================================================================
 region_csv = """Region Name,Total_Sales,Outlet_Count,Pct_of_Total
 NAIROBI REGION,1429021702.88,162,49.46
@@ -71,6 +72,10 @@ with st.sidebar:
     lang = st.radio("Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
+    # Secure API Entry Point kwenye Sidebar ili pasivuje
+    groq_api_key = st.text_input("Groq API Key:", type="password", help="Weka Groq API Key yako hapa")
+    st.write("---")
+    
     st.markdown('<div class="google-menu-item">📝 Mazungumzo mapya</div>', unsafe_allow_html=True)
     st.markdown('<div class="google-menu-item">🔍 Tafuta mazungumzo</div>', unsafe_allow_html=True)
     
@@ -99,7 +104,7 @@ with st.sidebar:
         st.rerun()
 
 # =====================================================================
-# 4. PRIMARY MAIN PANEL CONTROLLER (HALISI)
+# 4. PRIMARY MAIN PANEL CONTROLLER (100% REAL-TIME LIVE)
 # =====================================================================
 st.title(text_dict[lang]["title"])
 st.caption(text_dict[lang]["desc"])
@@ -121,59 +126,75 @@ if page == "📈 Executive Overview & Pipeline":
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N WEBHOOK ENGINE ---
+# --- VIEW 2: REAL N8N WEBHOOK OPERATION LAYER ---
 if page == "🧠 Simulated n8n Orchestration Core":
-    st.subheader("🔌 Real n8n Webhook Integration Core")
-    
-    # Sehemu ya kuweka URL yako halisi ya Webhook ya n8n kutoka kwenye server yako au localhost
-    n8n_url = st.text_input("Ingiza n8n Webhook URL yako hapa:", value="http://localhost:5678/webhook/mika-data")
+    st.subheader("🔌 Live n8n Webhook Node Connection")
+    n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://localhost:5678/webhook/mika-data-sync")
     
     if st.button("🚀 Execute Live n8n Pipeline", type="primary"):
-        st.info("Sending payload trigger to n8n workflow...")
+        st.info("Firing outbound trigger parameters to local n8n automation lane...")
         try:
-            # Kutuma data zote za mauzo kwenda n8n kihalisia!
-            payload = {"status": "trigger", "data_sample": region_csv}
-            response = requests.post(n8n_url, json=payload, timeout=10)
+            # Kutuma data kamili halisi ya CSV kwenda n8n node!
+            payload = {
+                "source": "streamlit_command_center",
+                "region_matrix": region_csv,
+                "payment_matrix": payment_csv
+            }
+            response = requests.post(n8n_url, json=payload, timeout=8)
             
             if response.status_code == 200:
-                st.success(f"✅ Webhook Successful! Response from n8n: {response.text}")
+                st.success("✅ n8n Pipeline completed execution step successfully!")
+                st.json(response.json() if response.headers.get('content-type') == 'application/json' else {"response": response.text})
             else:
-                st.error(f"❌ Server returned error code: {response.status_code}")
+                st.error(f"❌ Automation server returned code: {response.status_code}")
         except Exception as e:
-            st.error(f"⚠️ Hakujaunganishwa kwenye n8n bado: {str(e)}")
+            st.error(f"⚠️ Could not hit active n8n listener node: {str(e)}")
 
-# --- VIEW 3: DYNAMIC ASK MIKA CHATBOT VIA LOCAL DATA MATCHING ---
+# --- VIEW 3: DYNAMIC CHATBOT DRIVEN BY REAL DATA & GROQ LLM LAYER ---
 if page == "💬 Ask MIKA Market Chatbot":
-    st.subheader("💬 Ask MIKA — Real Market Intelligence Chatbot")
+    st.subheader("💬 Ask MIKA — Dynamic AI Market Intelligence Chatbot")
     
-    # Onyesha mazungumzo
-    if st.session_state["chat_history"]:
+    if not groq_api_key:
+        st.info("🔑 Please enter your Groq API Key in the sidebar input block to start chatting with real data layers.")
+    
+    if groq_api_key:
+        # Display history rows neatly
         for chat in st.session_state["chat_history"]:
             if chat["role"] == "user":
                 st.markdown(f'<div class="chat-user-row"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
             if chat["role"] == "mika":
                 st.markdown(f'<div class="chat-mika-row"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+                
+        query_box = st.chat_input("Ask about sales logs, stockists, regions, or liquidity...")
+        if query_box:
+            short_log = query_box[:28] + "..." if len(query_box) > 28 else query_box
+            if short_log not in st.session_state["search_logs"]:
+                st.session_state["search_logs"].insert(0, short_log)
+                
+            st.session_state["chat_history"].append({"role": "user", "text": query_box})
             
-    query_box = st.chat_input("Ask any business or competitor query here...")
-    if query_box:
-        # Hifadhi kwenye search logs upande wa sidebar
-        short_log = query_box[:28] + "..." if len(query_box) > 28 else query_box
-        if short_log not in st.session_state["search_logs"]:
-            st.session_state["search_logs"].insert(0, short_log)
-            
-        st.session_state["chat_history"].append({"role": "user", "text": query_box})
-        
-        # UTABIRI WA AKILI (Data Matching): Jibu linabadilika kulingana na neno uliloandika!
-        query_lower = query_box.lower()
-        
-        if "stockist" in query_lower or "top" in query_lower:
-            bot_response = "Here are the top performance entries based on current data pools:\n1. NAIROBI REGION (49.46%)\n2. COAST REGION (16.20%)\n3. RIFT REGION (8.64%). Total traceable sales pool aggregated successfully."
-        elif "located" in query_lower or "where" in query_lower:
-            bot_response = "The active operations and corporate market presence are mapped across 7 main territories in Kenya: Nairobi Region, Coast Region, Rift Region, Nyanza Region, Mountain Region, and Eastern Region."
-        elif "payment" in query_lower or "cash" in query_lower:
-            bot_response = "According to our financial records, the majority share allocation goes to '60 Days from Invoice' at 35.7%, followed by '30 Days from Invoice' at 29.4%."
-        else:
-            bot_response = f"I processed your customized query for '{query_box}'. Currently, Nairobi leads the footprints with 162 outlets logged."
-            
-        st.session_state["chat_history"].append({"role": "mika", "text": bot_response})
-        st.rerun()
+            try:
+                # Kuanzisha Groq client na kuipandishia data zote za kampuni ili isipike uongo!
+                client = Groq(api_key=groq_api_key)
+                
+                system_context = f"""
+                You are MIKA, a market intelligence expert chatbot for enterprise sales tracking in Kenya.
+                You analyze local market records, supply chains, stockouts, and competitors.
+                Here is the real business dataset to ground your analysis perfectly (Do not hallucinate or make up false values):
+                
+                REGIONAL SALES POOL DATA:
+                {region_csv}
+                
+                PAYMENT TERMS & CREDIT PIPELINE:
+                {payment_csv}
+                
+                Provide sharp, concise, executive-level business answers using this data. Speak like a professional data strategist.
+                """
+                
+                chat_completion = client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": system_context},
+                        {"role": "user", "content": query_box}
+                    ],
+                    model="llama3-8b-8192",
+                    temperature=0.2

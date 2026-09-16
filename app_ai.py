@@ -163,7 +163,7 @@ if page == "📈 Executive Overview & Pipeline":
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
+# PAGE VIEW 2: FULL-SCREEN AI REPORT GENERATOR
 # ==========================================
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
@@ -194,7 +194,73 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            ai_report = completion.choices[0].message.content
+            ai_report = completion.choices.message.content
             st.markdown(ai_report)
             
             st.write("---")
+            st.subheader("📱 Automated Management Broadcast Alert Payload")
+            
+            board_alert = (
+                "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
+                "Dear Directors,\n"
+                "The weekly sales data audit has been compiled successfully via automation.\n\n"
+                "💰 *Key Portfolio Performance:*\n"
+                "- Total Verified Revenue: KSh 2.89 Billion.\n"
+                "- Nairobi Hub Market Share: 49.46% (Dominant Sub-Region).\n\n"
+                "⚠️ *Critical Data Tracking Alert:*\n"
+                "- 89.87% (KSh 2.60B) of transaction lines currently lack identified stockist data. This requires immediate automation logic mitigation to secure tracing controls.\n\n"
+                "🌐 Deployed Control Center: https://streamlit.app"
+            )
+            
+            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
+            
+        except Exception as e:
+            st.error(f"AI Server Connection Error: {e}")
+    else:
+        st.info(text[lang]["ai_idle"])
+
+
+# ==========================================
+# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT (WITH HISTORY MEMORY CORE)
+# ==========================================
+else:
+    st.subheader(text[lang]["chat_header"])
+    st.write(text[lang]["chat_desc"])
+    
+    # 🧠 CHAT HISTORY BUFFER INITIALIZATION
+    if "chat_history" not in st.session_state:
+        st.session_state["chat_history"] = []
+        
+    # Render past conversation speech bubbles on load
+    for chat in st.session_state["chat_history"]:
+        if chat["role"] == "user":
+            st.markdown(f'<div class="user-bubble"><b>👤 You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+            
+    # Text input for new dynamic entries
+    user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
+    
+    if user_query:
+        with st.spinner("MIKA Core Engine is scanning market variables..."):
+            try:
+                client = Groq()
+                
+                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_query}. Respond fully and professionally in language: {lang}."
+                
+                completion = client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": context_prompt}]
+                )
+                
+                ai_response = completion.choices.message.content
+                
+                # Append recent exchange parameters straight into the live session history arrays
+                st.session_state["chat_history"].append({"role": "user", "text": user_query})
+                st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
+                
+                # Rerun application to display fresh speech blocks sequentially
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"Chatbot Communication Failure: {e}")

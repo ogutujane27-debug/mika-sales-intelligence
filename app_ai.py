@@ -194,7 +194,8 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            ai_report = completion.choices.message.content
+            # SULUHISHO: Tumeweka [0] hapa kuzuia 'list' object error
+            ai_report = completion.choices[0].message.content
             st.markdown(ai_report)
             
             st.write("---")
@@ -253,7 +254,8 @@ else:
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 
-                ai_response = completion.choices.message.content
+                # SULUHISHO: Tumeweka [0] na hapa pia kuzuia 'list' object error
+                ai_response = completion.choices[0].message.content
                 
                 # Append recent exchange parameters straight into the live session history arrays
                 st.session_state["chat_history"].append({"role": "user", "text": user_query})

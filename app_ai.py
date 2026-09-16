@@ -186,7 +186,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 messages=[{"role": "user", "content": prompt_instructions}]
             )
             
-                        status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
+            status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
             ai_report = completion.choices.message.content
@@ -211,3 +211,5 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             
         except Exception as e:
             st.error(f"AI Server Connection Error: {e}")
+    else:
+        st.info(text[lang]["ai_idle"])

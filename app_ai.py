@@ -3,14 +3,16 @@ import pandas as pd
 import io
 
 # =====================================================================
-# 1. SYSTEM SETUP
+# 1. MFUMO WA CORE NA MTINDO WA GOOGLE (CSS)
 # =====================================================================
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
-# Premium CSS for Google-style layout and buttons
 st.markdown("""
     <style>
+    /* Kuficha mfumo wa kawaida wa streamlit ili kutumia wetu wa kisasa */
     [data-testid="stSidebarNav"] {display: none;}
+    
+    /* Jina la Mika Chat Bot upande wa kushoto */
     .sidebar-title {
         font-size: 24px;
         font-weight: bold;
@@ -25,18 +27,14 @@ st.markdown("""
         margin-bottom: 10px;
         font-weight: 500;
     }
-    /* Green Run/Execute button theme */
-    .stButton>button { 
-        background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        border-radius: 6px !important; width: 100%; height: 45px;
-    }
+    /* Mapovu ya fomu ya mazungumzo (Chat Bubbles) */
     .user-bubble { background-color: #e2f0d9; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; }
     .mika-bubble { background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; }
     </style>
 """, unsafe_allow_html=True)
 
 # =====================================================================
-# 2. BUSINESS DATA
+# 2. DATA ZA KAMPUNI
 # =====================================================================
 region_csv = """Region Name,Total_Sales,Outlet_Count,Pct_of_Total
 NAIROBI REGION,1429021702.88,162,49.46
@@ -57,31 +55,20 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
+# Kumbukumbu ya kuhifadhi maswali ya chat
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = [
-        {"text": "how to use postman tool on my local pc"},
-        {"text": "can you outline the differences between GET and POST"},
-        {"text": "what's up i'm not getting any feedback"}
+        "how to use postman tool on my l...",
+        "can you outline the differences b...",
+        "what's up i'm not getting any fee..."
     ]
 
-# Lugha / Translations
-text_dict = {
-    "English": {
-        "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
-        "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
-        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data.",
-        "chat_title": "Recent Chats"
-    },
-    "Kiswahili": {
-        "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
-        "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
-        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum.",
-        "chat_title": "Ya hivi majuzi"
-    }
-}
+# Mfumo wa kujibu maswali ya chapchap (Simulated response)
+if "bot_replies" not in st.session_state:
+    st.session_state["bot_replies"] = []
 
 # =====================================================================
-# 3. GOOGLE-STYLE SIDEBAR
+# 3. UPANDISHI WA GOOGLE SIDEBAR (HAPA NDIPO PANAPOBADILISHA UKURASA)
 # =====================================================================
 with st.sidebar:
     st.markdown('<div class="sidebar-title">🤖 Mika Chat Bot</div>', unsafe_allow_html=True)
@@ -89,74 +76,66 @@ with st.sidebar:
     lang = st.radio("🌐 Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
-    if st.button("➕ Mazungumzo mapya" if lang == "Kiswahili" else "➕ New Conversation", use_container_width=True):
-        st.session_state["chat_history"] = []
-        st.rerun()
+    # Menyu ya kubadili Kurasa kwa kutumia st.selectbox ya Streamlit (Inafanya kazi bila kukwama)
+    chaguzi = ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
+    page = st.selectbox("Chagua Mtazamo / Select View:", chaguzi)
+    
+    st.write("---")
+    
+    # Sehemu ya "Ya hivi majuzi" / History
+    st.markdown('<div class="sidebar-section-title">Ya hivi majuzi / Recent</div>', unsafe_allow_html=True)
+    for chat in st.session_state["chat_history"]:
+        st.caption(f"💬 {chat}")
         
-    if st.button("🔍 Tafuta mazungumzo" if lang == "Kiswahili" else "🔍 Search Chats", use_container_width=True):
-        st.toast("Utafutaji unakuja hivi karibuni!")
-    
     st.write("---")
-    
-    page = st.radio(
-        "Select Dashboard View:" if lang == "English" else "Chagua Mtazamo:",
-        ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
-    )
-    st.write("---")
-    
-    st.markdown(f'<div class="sidebar-section-title">{text_dict[lang]["chat_title"]}</div>', unsafe_allow_html=True)
-    
-    for idx, chat in enumerate(st.session_state["chat_history"]):
-        short_text = chat["text"][:28] + "..." if len(chat["text"]) > 28 else chat["text"]
-        if st.button(f"💬 {short_text}", key=f"nav_log_{idx}", use_container_width=True):
-            st.toast(f"Ulichagua: {chat['text']}")
-                
-    st.write("---")
-    if st.button("🗑️ Clear History" if lang == "English" else "🗑️ Safisha Kumbukumbu", key="clear_logs_action"):
+    if st.button("🗑️ Clear History" if lang == "English" else "🗑️ Safisha Kumbukumbu"):
         st.session_state["chat_history"] = []
+        st.session_state["bot_replies"] = []
         st.rerun()
 
 # =====================================================================
-# 4. MAIN BODY DISPLAY SWITCHING
+# 4. PANELI KUU: INABADILIKA KULINGANA NA UKURASA ULIOCHAGULIWA
 # =====================================================================
-st.title(text_dict[lang]["title"])
-st.caption(text_dict[lang]["desc"])
-st.warning(text_dict[lang]["risk_banner"])
-st.write("---")
 
-# --- PAGE 1: EXECUTIVE OVERVIEW ---
+# --- UKURASA WA 1: EXECUTIVE OVERVIEW ---
 if page == "📈 Executive Overview & Pipeline":
-    st.subheader("📊 Regional Market Share & Contribution")
+    st.title("🖥️ MIKA Global Enterprise Sales Dashboard" if lang == "English" else "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo")
+    st.warning("⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack stockist data.")
+    
+    st.subheader("🌍 Regional Market Share & Contribution")
     st.dataframe(df_region, use_container_width=True, hide_index=True)
     
     st.subheader("💳 Credit Terms & Liquidity Exposure Pipeline")
     st.dataframe(df_payment, use_container_width=True, hide_index=True)
 
-# --- PAGE 2: N8N CORE AUTOMATION ---
+# --- UKURASA WA 2: N8N AUTOMATION PIPELINE ---
 elif page == "🧠 Simulated n8n Orchestration Core":
-    st.subheader("🧠 n8n Automation Engine Pipeline")
-    st.write("Welcome to the automation layer. Here you can execute backend workflows.")
+    st.title("🧠 Simulated n8n Automation Engine" if lang == "English" else "🧠 Mfumo wa Kiotomatiki wa n8n")
+    st.write("Bonyeza kitufe hapa chini ili kuwasha mitambo ya kiotomatiki ya kusafisha data nyuma ya mfumo.")
     
-    if st.button("🚀 Trigger Local n8n Orchestration Pipeline"):
-        st.success("✅ n8n Pipeline executed successfully! Data cleaned and loaded into memory.")
-        st.info("Webhook captured on localhost:5678. Status: 200 OK")
+    # Hapa ndipo n8n inafanya kazi sasa hivi!
+    if st.button("🚀 Trigger Local n8n Orchestration Pipeline", type="primary"):
+        st.success("✅ n8n Pipeline executed successfully! Raw data has been cleaned and structured.")
+        st.info("Webhook Response: Status 200 OK | Host: localhost:5678")
     else:
-        st.info("💡 Local n8n Simulator Core: Idle. Waiting for trigger instruction.")
+        st.info("💡 Status: Idle. Pipeline is waiting for your run command.")
 
-# --- PAGE 3: ASK MIKA CHATBOT ---
+# --- UKURASA WA 3: ASK MIKA CHATBOT ---
 elif page == "💬 Ask MIKA Market Chatbot":
-    st.subheader("💬 Ask MIKA — Market Intelligence Chatbot")
-    st.write("Ask any business or market query related to Kenya.")
+    st.title("💬 Ask MIKA — Market Intelligence Chatbot")
+    st.write("Andika swali lako la kibiashara hapa chini kuhusu masoko ya Kenya (kama vile Nairobi, Coast, nk).")
     
-    user_query = st.text_input("Type your question here / Andika swali lako hapa:", key="user_question_input")
+    # Fomu ya kupokea swali
+    with st.form(key="chat_form", clear_on_submit=True):
+        user_query = st.text_input("Type your query here / Andika swali lako hapa:")
+        submit_button = st.form_submit_with_name("Send / Tuma")
+        
+    if submit_button and user_query:
+        # Hifadhi kwenye kumbukumbu
+        st.session_state["chat_history"].insert(0, user_query[:28] + "...")
+        st.session_state["bot_replies"].append({"user": user_query, "bot": f"Nimepokea swali lako kuhusu '{user_query}'. Kulingana na data zetu, soko kubwa zaidi ni NAIROBI REGION lenye mauzo ya 49.46%."})
     
-    if user_query:
-        # Save to sidebar history dynamically
-        st.session_state["chat_history"].insert(0, {"text": user_query})
-        
-        # Display response bubbles
-        st.markdown(f'<div class="user-bubble"><b>You:</b> {user_query}</div>', unsafe_allow_html=True)
-        
-        # Simple local AI logic for presentation
-        response = f"Hello! I am MIKA. I processed your request regarding '{user_query}'. Our top market is NAIROBI REGION with 49.46% of total sales."
-        st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {response}</div>', unsafe_allow_html=True)
+    # Onyesha mazungumzo yaliyofanyika
+    for chat in st.session_state["bot_replies"]:
+        st.markdown(f'<div class="user-bubble"><b>You:</b> {chat["user"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["bot"]}</div>', unsafe_allow_html=True)

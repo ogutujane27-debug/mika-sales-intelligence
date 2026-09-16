@@ -57,6 +57,77 @@ if "chat_history" not in st.session_state:
 
 # 3. SIDEBAR MULTI-PAGE ENGINE & LIVE CHAT HISTORY SIDEBAR
 with st.sidebar:
+    import streamlit as st
+
+# Hakikisha hii ipo juu kabisa ya faili yako
+st.set_page_config(layout="wide")
+
+# CSS ya kubadilisha muundo ufanane kabisa na ule wa picha ulizotuma
+st.markdown("""
+    <style>
+        /* Kuondoa nafasi kubwa juu ya sidebar */
+        [data-testid="stSidebarNav"] {display: none;}
+        
+        /* Mtindo wa herufi na rangi za sidebar */
+        .sidebar-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a73e8;
+            margin-bottom: 25px;
+            font-family: 'Google Sans', sans-serif;
+        }
+        .sidebar-item {
+            font-size: 16px;
+            padding: 10px 0px;
+            color: #3c4043;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-section-title {
+            font-size: 14px;
+            color: #70757a;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Kujenga Sidebar kama ulivyoomba
+with st.sidebar:
+    # 1. Jina kuu la mfumo wako
+    st.markdown('<div class="sidebar-title">🤖 Mika Chat Bot</div>', unsafe_allow_html=True)
+    
+    # 2. Vitufe vikuu vya amri (Vinafanana na Google Sidebar)
+    if st.button("➕ Mazungumzo mapya", use_container_width=True):
+        st.session_state.messages = [] # Inafuta chat ya sasa kuanza mpya
+        
+    if st.button("🔍 Tafuta mazungumzo", use_container_width=True):
+        st.toast("Sehemu ya utafutaji inakuja hivi karibuni!")
+
+    st.markdown('<hr style="margin: 15px 0;">', unsafe_allow_html=True)
+    
+    # 3. Sehemu ya "Ya hivi majuzi" (Recent History)
+    st.markdown('<div class="sidebar-section-title">Ya hivi majuzi</div>', unsafe_allow_html=True)
+    
+    # Mfano wa list ya historia zako za nyuma (Tengeneza hivi badala ya ile picha ya karatasi)
+    recent_chats = [
+        "how to use postman tool on my l...",
+        "can you outline the differences b...",
+        "what's up i'm not getting any fee..."
+    ]
+    
+    for chat in recent_chats:
+        if st.button(f"💬 {chat}", key=chat, use_container_width=True):
+            st.write(f"Ulichagua: {chat}")
+
+# Sehemu ya data yako (Iliyokuwa na Indentation Error hapo awali)
+# Hakikisha mistari hii imekaa bila nafasi za ziada mbele (Perfect Indentation)
+st.title("Mika Chat Bot - Dashboard")
+if 'df_region' in locals():
+    st.dataframe(df_region, use_container_width=True, hide_index=True)
+
     st.header("⚡ Command Center")
     lang = st.radio("🌐 Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")

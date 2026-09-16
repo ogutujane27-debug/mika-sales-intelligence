@@ -172,9 +172,12 @@ elif page == "🧠 Real-Time AI Management Brain":
                 st.write("---")
                 st.markdown(completion.choices[0].message.content)
                 
-            except Exception as e:
+                        except Exception as e:
                 st.error(f"AI Server Connection Error: {e}")
-down
+    else:
+        st.info(text[lang]["ai_idle"])
+
+
 # ==========================================
 # PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT
 # ==========================================
@@ -201,4 +204,14 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}."
                 )
                 
-                # FIXED MODEL NAME FOR LIVE PRODUCTION INTERACTIVE QUERIES
+                completion = client.chat.completions.create(
+                    model="llama3-8b-8192",
+                    messages=[{"role": "user", "content": context_prompt}]
+                )
+                
+                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
+                st.write("---")
+                st.markdown(completion.choices.message.content)
+                
+            except Exception as e:
+                st.error(f"Chatbot Communication Failure: {e}")

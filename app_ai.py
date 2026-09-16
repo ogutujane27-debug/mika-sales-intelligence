@@ -161,7 +161,7 @@ if page == "📈 Executive Overview & Pipeline":
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
+# PAGE VIEW 2: FULL-SCREEN AI REPORT GENERATOR
 # ==========================================
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
@@ -182,20 +182,67 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             client = Groq()
             region_summary = df_region.to_string(index=False)
             
-            prompt_instructions = f"""
-            Perform an executive-level audit business analysis on this corporate dataset for MIKA sales managers.
-            Dataset Parameters:
-            - Transaction Analysis Total: KSh 2,888,966,390.88 across 266 data rows.
-            - Official Target Total: KSh 1,684,717,184.70.
-            - Traceability Risk: 89.87% (KSh 2.60B) of entries lack stockist tracking metrics.
-            - Regional Log: {region_summary}
-            
-            Do NOT mention 'Phase 16' or 'Phase 18' in your text! Keep it professional for corporate board.
-            Your output must be written completely in {lang}. Use strong, executive formatting.
-            Format your presentation into three distinct bold markdown headers:
-            1. MANAGEMENT THE WHYS (Operational logic for Nairobi market concentration).
-            2. WHAT-IF RISK MITIGATION (Financial liquidity lift in KSh if stockist tracing maps Nairobi's pool).
-            3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
-            """
+            prompt_instructions = f"Perform an executive-level audit business analysis on this corporate dataset for MIKA sales managers. Total Revenue: KSh 2.88B. Official Target: KSh 1.68B. Traceability Risk: 89.87%% lack stockist data. Regional Log: {region_summary}. Do NOT mention Phase 16 or Phase 18! Output must be in {lang}. Format with three headers: 1. MANAGEMENT THE WHYS, 2. WHAT-IF RISK MITIGATION, 3. STRATEGIC AUDIT ACTIONS."
             
             completion = client.chat.completions.create(
+                model="openai/gpt-oss-120b",
+                messages=[{"role": "user", "content": prompt_instructions}]
+            )
+            
+            status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
+            st.write("---")
+            
+            ai_report = completion.choices[0].message.content
+            st.markdown(ai_report)
+            
+            st.write("---")
+            st.subheader("📱 Automated Management Broadcast Alert Payload")
+            
+            board_alert = (
+                "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
+                "Dear Directors,\n"
+                "The weekly sales data audit has been compiled successfully via automation.\n\n"
+                "💰 *Key Portfolio Performance:*\n"
+                "- Total Verified Revenue: KSh 2.89 Billion.\n"
+                "- Nairobi Hub Market Share: 49.46% (Dominant Sub-Region).\n\n"
+                "⚠️ *Critical Data Tracking Alert:*\n"
+                "- 89.87% (KSh 2.60B) of transaction lines currently lack identified stockist data. This requires immediate automation logic mitigation to secure tracing controls.\n\n"
+                "🌐 Deployed Control Center: https://streamlit.app"
+            )
+            
+            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
+            
+        except Exception as e:
+            st.error(f"AI Server Connection Error: {e}")
+    else:
+        st.info(text[lang]["ai_idle"])
+
+
+# ==========================================
+# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT
+# ==========================================
+else:
+    st.subheader(text[lang]["chat_header"])
+    st.write(text[lang]["chat_desc"])
+    
+    user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
+    
+    if user_query:
+        with st.spinner("MIKA Core Engine is scanning market variables..."):
+            try:
+                client = Groq()
+                
+                # SAFARI HII TUMEFUTA MABANO YOTE YA KUCHANGANYA NA KUWEKA STR NYEPESI MOJA TU
+                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_query}. Respond fully and professionally in language: {lang}."
+                
+                completion = client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": context_prompt}]
+                )
+                
+                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
+                st.write("---")
+                st.markdown(completion.choices[0].message.content)
+                
+            except Exception as e:
+                st.error(f"Chatbot Communication Failure: {e}")

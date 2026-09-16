@@ -4,10 +4,9 @@ import plotly.express as px
 from groq import Groq
 import io
 
-# 1. ENTERPRISE SUITE INITIALIZATION
+# 1. ENTERPRISE LEVEL CONFIGURATION
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
-# Premium CSS parsing for fluid animations and premium executive chat layout
 st.markdown("""
     <style>
     @keyframes slideUp { 
@@ -16,20 +15,20 @@ st.markdown("""
     }
     .block-container { padding-top: 1rem; padding-bottom: 1rem; }
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
-    
-    /* Green Run/Execute button theme */
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
         box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
     }
-    
-    /* Speech bubble styles for history panel */
+    .stDownloadButton>button {
+        background-color: #007bff !important; color: white !important; font-weight: bold !important;
+        box-shadow: 0 4px 15px rgba(0,123,255,0.25); border-radius: 6px !important; width: 100%; height: 45px;
+    }
     .user-bubble { background-color: #e2f0d9; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; font-family: sans-serif; }
     .mika-bubble { background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; font-family: sans-serif; }
     </style>
 """, unsafe_allow_html=True)
 
-# 2. REAL CORPORATE DATA MATRIX POOLS
+# 2. SOURCE DATA MATRIX POOLS
 region_csv = """Region Name,Total_Sales,Outlet_Count,Pct_of_Total
 NAIROBI REGION,1429021702.88,162,49.46
 COAST REGION,467868246.57,6,16.20
@@ -49,20 +48,20 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
-# 3. SIDEBAR MULTI-PAGE ENGINE
+# 3. SIDEBAR NAVIGATION CONTROLS
 with st.sidebar:
     st.header("⚡ Command Center")
     lang = st.radio("🌐 Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
-    page = st.radio(
+    page = st.sidebar.radio(
         "Select Dashboard View:" if lang == "English" else "Chagua Mtazamo:",
         ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
     )
     st.write("---")
-    st.caption("MIKA Automation Infrastructure Layer Active.")
+    st.caption("MIKA Infrastructure Verification Active.")
 
-# Localized app dictionary strings
+# Translation matrix
 text = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
@@ -102,7 +101,7 @@ st.title(text[lang]["title"])
 st.write(text[lang]["desc"])
 st.write("---")
 
-# HIGH-LEVEL EXECUTIVE KPI METRICS
+# EXECUTIVE METRICS ROW
 col_m1, col_m2, col_m3 = st.columns(3)
 with col_m1:
     st.metric(label=text[lang]["m1"], value="KSh 2.89B", delta="Verified Analytics Active")
@@ -114,7 +113,7 @@ st.write("---")
 
 
 # ==========================================
-# PAGE VIEW 1: EXECUTIVE OVERVIEW & PIPELINE
+# PAGE VIEW 1: EXECUTIVE PERFORMANCE METRICS
 # ==========================================
 if page == "📈 Executive Overview & Pipeline":
     st.warning(text[lang]["risk_banner"])
@@ -148,7 +147,6 @@ if page == "📈 Executive Overview & Pipeline":
         "- Market Concentration: Nairobi Region dominates at KSh 1.43B (49.46% of total revenue).\n"
         "- Data Quality Exposure: 89.87% (KSh 2.60B) of transaction lines currently lack stockist data tags."
     )
-    
     st.download_button(
         label="📥 Download Executive Briefing" if lang == "English" else "📥 Pakua Muhtasari wa Ripoti",
         data=raw_briefing_text,
@@ -158,7 +156,7 @@ if page == "📈 Executive Overview & Pipeline":
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
+# PAGE VIEW 2: FULL-SCREEN AUTOMATION PIPELINE VIEW
 # ==========================================
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
@@ -189,8 +187,8 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            ai_report = completion.choices[0].message.content
-            st.markdown(ai_report)
+            ai_report_text = completion.choices[0].message.content
+            st.markdown(ai_report_text)
             
             st.write("---")
             st.subheader("📱 Automated Management Broadcast Alert Payload")
@@ -203,95 +201,3 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 "- Total Verified Revenue: KSh 2.89 Billion.\n"
                 "- Nairobi Hub Market Share: 49.46%.\n\n"
                 "⚠️ *Critical Data Tracking Alert:*\n"
-                "- 89.87% lack identified stockist data. Requires immediate automation controls.\n\n"
-                "🌐 Deployed Control Center: https://streamlit.app"
-            )
-            
-            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
-            
-        except Exception as e:
-            st.error(f"AI Server Connection Error: {e}")
-    else:
-        st.info(text[lang]["ai_idle"])
-
-
-# ==========================================
-# PAGE VIEW 3: DYNAMIC ASK MIKA MARKET CHATBOT (CLEAN UI & PERSISTENT MEMORY)
-# ==========================================
-else:
-    st.subheader(text[lang]["chat_header"])
-    st.write(text[lang]["chat_desc"])
-    
-    # Initialize Memory Variables safely inside Session State
-    if "chat_history" not in st.session_state:
-        st.session_state["chat_history"] = []
-    if "prefilled_query" not in st.session_state:
-        st.session_state["prefilled_query"] = ""
-
-    # 🎛️ SYSTEM CONTROL PANEL LAYOUT Grid
-    c_ctrl1, c_ctrl2 = st.columns(2)
-    with c_ctrl1:
-        if st.button("🗑️ Clear" if lang == "English" else "🗑️ Futa"):
-            st.session_state["chat_history"] = []
-            st.session_state["prefilled_query"] = ""
-            st.rerun()
-            
-    with c_ctrl2:
-        with st.popover("⏳ History Logs" if lang == "English" else "⏳ Kumbukumbu ya Siri"):
-            if not st.session_state["chat_history"]:
-                st.write("No previous chat history found." if lang == "English" else "Hakuna kumbukumbu za nyuma.")
-            for chat in st.session_state["chat_history"]:
-                if chat["role"] == "user":
-                    st.markdown(f'👤 **You:** {chat["text"]}')
-                else:
-                    st.markdown(f'🤖 **MIKA:** {chat["text"]}')
-                    st.write("---")
-
-    st.write("---")
-    
-    # 📌 INDEPENDENT TOP SEARCHES GRIDS SECTION
-    st.write("💡 **Top Searches / Maswali Haraka:**" if lang == "English" else "💡 **Maswali Maarufu ya Wakurugenzi:**")
-    c_ts1, c_ts2 = st.columns(2)
-    
-    with c_ts1:
-        if st.button("🌍 Nairobi Market Share & Performance Report"):
-            st.session_state["prefilled_query"] = "Analyze the Nairobi region performance and its 49.46% market share concentration."
-            st.rerun()
-            
-    with c_ts2:
-        if st.button("🥊 Samsung vs Ramtons Competitor Strategy Analysis"):
-            st.session_state["prefilled_query"] = "What are Samsung and Ramtons doing well in Kenya electronics market compared to MIKA?"
-            st.rerun()
-
-    st.write("---")
-
-    # 🛒 STABLE ST.FORM CONTROL GATEWAY TO CRUSH INTERACTIVE LOCKUPS
-    with st.form(key="mika_chat_form", clear_on_submit=True):
-        current_placeholder = st.session_state["prefilled_query"]
-        user_input_field = st.text_input(
-            text[lang]["chat_ph"], 
-            value=current_placeholder if current_placeholder else ""
-        )
-        submit_chat_button = st.form_submit_button(
-            label="💬 Send Query" if lang == "English" else "💬 Tuma Swali"
-        )
-
-    if submit_chat_button and user_input_field:
-        st.session_state["prefilled_query"] = ""
-        with st.spinner("MIKA Core Engine is scanning market variables..."):
-            try:
-                client = Groq()
-                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors in Kenya electronics market: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_input_field}. Respond fully and professionally in language: {lang}."
-                
-                completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                ai_response = completion.choices[0].message.content
-                st.session_state["chat_history"].append({"role": "user", "text": user_input_field})
-                st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
-                st.rerun()
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")

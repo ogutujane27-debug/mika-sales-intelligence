@@ -172,15 +172,16 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
             """
             
+            # REPLACED: Mfumo thabiti wa modeli mpya ya Groq
             completion = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="llama-3.3-70b-specdec",
                 messages=[{"role": "user", "content": prompt_instructions}]
             )
             
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            ai_report = completion.choices.message.content
+            ai_report = completion.choices[0].message.content
             st.markdown(ai_report)
             
             st.write("---")
@@ -232,14 +233,15 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}. Do not mention Phase 16 or Phase 18 labels."
                 )
                 
+                # REPLACED: Mfumo thabiti wa modeli mpya ya Groq kwa ajili ya Chatbot live
                 completion = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="llama-3.3-70b-specdec",
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 
                 st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
                 st.write("---")
-                st.markdown(completion.choices.message.content)
+                st.markdown(completion.choices[0].message.content)
                 
             except Exception as e:
                 st.error(f"Chatbot Communication Failure: {e}")

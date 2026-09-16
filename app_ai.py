@@ -4,41 +4,30 @@ import plotly.express as px
 import io
 
 # =====================================================================
-# 1. CORE ENTERPRISE INITIALIZATION & GOOGLE SIDEBAR CSS STYLING
+# 1. SYSTEM INITIALIZATION & GOOGLE SIDEBAR STYLE
 # =====================================================================
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
 st.markdown("""
     <style>
-    /* Ficha muundo wa kawaida wa kurasa za Streamlit */
     [data-testid="stSidebarNav"] {display: none;}
-    
-    /* Mtindo wa Upau Vaux Pembeni wa Google (Google Sidebar Styling) */
     .google-brand {
         font-size: 24px;
         font-weight: 500;
         color: #1a73e8;
-        font-family: 'Google Sans', 'Segoe UI', Arial, sans-serif;
+        font-family: 'Google Sans', sans-serif;
         margin-bottom: 25px;
         padding-left: 8px;
     }
-    
-    /* Mistari ya amri yenye ikoni ndogo (Google Menu Item Style) */
     .google-menu-item {
         font-size: 15px;
         color: #3c4043;
-        font-family: sans-serif;
         padding: 10px 8px;
         display: flex;
         align-items: center;
         gap: 14px;
         cursor: pointer;
-        border-radius: 4px;
     }
-    .google-menu-item:hover {
-        background-color: #f1f3f4;
-    }
-    
     .google-section-title {
         font-size: 13px;
         font-weight: 500;
@@ -47,27 +36,14 @@ st.markdown("""
         margin-bottom: 12px;
         padding-left: 8px;
     }
-    
-    /* Orodha ya vitu vilivyotafutwa hivi karibuni */
     .google-history-item {
         font-size: 14px;
         color: #3c4043;
         padding: 8px 8px;
-        margin-bottom: 2px;
-        border-radius: 4px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        display: flex;
-        align-items: center;
-        gap: 12px;
     }
-    .google-history-item:hover {
-        background-color: #f1f3f4;
-        cursor: pointer;
-    }
-    
-    /* Mapovu mapya ya Chat ya Ask MIKA */
     .chat-user-row { background-color: #e2f0d9; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; }
     .chat-mika-row { background-color: #f1f1f1; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #1a73e8; color: #222222; }
     </style>
@@ -95,7 +71,6 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
-# Initialize session arrays safely
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
 if "search_logs" not in st.session_state:
@@ -106,12 +81,12 @@ if "search_logs" not in st.session_state:
         "can you outline the differences b..."
     ]
 
-# Multi-lingual Dictionary configuration 
+# Multi-lingual dictionary
 text_dict = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
         "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
-        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data. This is a tracking concern, not an immediate financial loss.",
+        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data.",
         "chat_title": "Ya hivi majuzi"
     },
     "Kiswahili": {
@@ -137,7 +112,6 @@ with st.sidebar:
     st.markdown('<div class="google-section-title">Kompyuta ndogo</div>', unsafe_allow_html=True)
     st.markdown('<div class="google-menu-item">➕ Weka daftari</div>', unsafe_allow_html=True)
     st.markdown('<div class="google-menu-item">📁 poe business project</div>', unsafe_allow_html=True)
-    
     st.write("---")
     
     st.markdown('<div class="google-section-title">Chagua Ukurasa / Views</div>', unsafe_allow_html=True)
@@ -146,19 +120,16 @@ with st.sidebar:
         ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"],
         label_visibility="collapsed"
     )
-    
     st.write("---")
     
     st.markdown(f'<div class="google-section-title">{text_dict[lang]["chat_title"]}</div>', unsafe_allow_html=True)
     
-    if not st.session_state["search_logs"]:
-        st.caption("Hakuna rekodi.")
-    else:
+    # Historia inayojijaza bila kutegemea mifumo migumu ya else
+    if st.session_state["search_logs"]:
         for idx, log in enumerate(st.session_state["search_logs"]):
             st.markdown(f'<div class="google-history-item">💬 {log}</div>', unsafe_allow_html=True)
             
     st.write("---")
-    
     st.markdown('<div class="google-section-title">⚙️ Mipangilio / Settings</div>', unsafe_allow_html=True)
     clear_action = st.checkbox("🗑️ Clear History & Logs")
     if clear_action:
@@ -168,7 +139,7 @@ with st.sidebar:
         st.rerun()
 
 # =====================================================================
-# 4. PRIMARY MAIN PANEL CONTROLLER
+# 4. PRIMARY MAIN PANEL CONTROLLER (NO ELSE BLOCKS)
 # =====================================================================
 st.title(text_dict[lang]["title"])
 st.caption(text_dict[lang]["desc"])
@@ -204,7 +175,7 @@ if page == "📈 Executive Overview & Pipeline":
     st.plotly_chart(fig_payment, use_container_width=True)
 
 # --- VIEW 2: N8N CORE AUTOMATION ---
-elif page == "🧠 Simulated n8n Orchestration Core":
+if page == "🧠 Simulated n8n Orchestration Core":
     st.subheader("🧠 Simulated n8n Webhook Node Engine Integration")
     st.write("Press the core activation node pipeline to parse database transactional strings.")
     
@@ -212,20 +183,22 @@ elif page == "🧠 Simulated n8n Orchestration Core":
         st.success("✅ [Status 200 OK] Live Pipeline Webhook Response Stream Complete!")
         with st.expander("📂 View Simulated Node Processing Payload Logs", expanded=True):
             st.code("[15:00:21] - Initializing payload extraction...\n[15:00:22] - Loaded 1,562 rows.\n[15:00:25] - Pipeline run completed successfully.", language="bash")
-    else:
+            
+    if not st.session_state.get('n8n_triggered', False):
         st.info("💡 Standby Mode: Local simulator execution channel waiting for trigger action input.")
 
 # --- VIEW 3: ASK MIKA CHATBOT ENGINE ---
-elif page == "💬 Ask MIKA Market Chatbot":
+if page == "💬 Ask MIKA Market Chatbot":
     st.subheader("💬 Ask MIKA — Limitless Market Intelligence Chatbot")
     
-    for chat in st.session_state["chat_history"]:
-        if chat["role"] == "user":
-            st.markdown(f'<div class="chat-user-row"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
-           
-            st.markdown(f'<div class="chat-mika-row"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+    if st.session_state["chat_history"]:
+        for chat in st.session_state["chat_history"]:
+            if chat["role"] == "user":
+                st.markdown(f'<div class="chat-user-row"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+            if chat["role"] == "mika":
+                st.markdown(f'<div class="chat-mika-row"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
             
-        query_box = st.chat_input("Ask any business or competitor query here...")
+    query_box = st.chat_input("Ask any business or competitor query here...")
     if query_box:
         if query_box not in st.session_state["search_logs"]:
             st.session_state["search_logs"].insert(0, query_box[:28] + "...")

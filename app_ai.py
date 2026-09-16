@@ -242,6 +242,6 @@ elif page == "💬 Ask MIKA Market Chatbot":
         st.session_state["chat_history"].append({"role": "mika", "text": bot_response})
         st.rerun()
         
-    # Hapa ndipo palipokuwa na kosa la else: tupu. Sasa limerekebishwa kwa kuweka pass
+    # Hapa ndipo palipokuwa na kosa la tupu. Sasa limerekebishwa kwa kuweka pass
     pass
 

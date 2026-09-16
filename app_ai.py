@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -7,14 +8,15 @@ import requests
 # =====================================================================
 # 1. CORE ENTERPRISE INITIALIZATION & GOOGLE SIDEBAR CSS STYLING
 # =====================================================================
-st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
+st.set_page_config(
+    page_title="MIKA Global Market Intelligence",
+    layout="wide"
+)
 
 st.markdown("""
     <style>
-    /* Ficha muundo wa kawaida wa kurasa za Streamlit Nav */
     [data-testid="stSidebarNav"] {display: none;}
-    
-    /* Mtindo wa Upau Vaux Pembeni wa Google (Google Sidebar Styling) */
+
     .google-brand {
         font-size: 24px;
         font-weight: 500;
@@ -23,8 +25,7 @@ st.markdown("""
         margin-bottom: 25px;
         padding-left: 8px;
     }
-    
-    /* Mistari ya amri yenye ikoni ndogo (Google Menu Item Style) */
+
     .google-menu-item {
         font-size: 15px;
         color: #3c4043;
@@ -36,10 +37,11 @@ st.markdown("""
         cursor: pointer;
         border-radius: 4px;
     }
+
     .google-menu-item:hover {
         background-color: #f1f3f4;
     }
-    
+
     .google-section-title {
         font-size: 13px;
         font-weight: 500;
@@ -48,8 +50,7 @@ st.markdown("""
         margin-bottom: 12px;
         padding-left: 8px;
     }
-    
-    /* Orodha ya vitu vilivyotafutwa hivi karibuni */
+
     .google-history-item {
         font-size: 14px;
         color: #3c4043;
@@ -63,16 +64,32 @@ st.markdown("""
         align-items: center;
         gap: 12px;
     }
+
     .google-history-item:hover {
         background-color: #f1f3f4;
         cursor: pointer;
     }
-    
-    /* Mapovu mapya ya Chat ya Ask MIKA */
-    .chat-user-row { background-color: #e2f0d9; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; }
-    .chat-mika-row { background-color: #f1f1f1; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; font-family: sans-serif; }
+
+    .chat-user-row {
+        background-color: #e2f0d9;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        color: #1e3d14;
+    }
+
+    .chat-mika-row {
+        background-color: #f1f1f1;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 5px solid #28a745;
+        color: #222222;
+        font-family: sans-serif;
+    }
     </style>
 """, unsafe_allow_html=True)
+
 
 # =====================================================================
 # 2. REAL CORPORATE DATA MATRIX POOLS
@@ -96,8 +113,13 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
+
+# =====================================================================
+# 3. SESSION STATE
+# =====================================================================
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
+
 if "search_logs" not in st.session_state:
     st.session_state["search_logs"] = [
         "i want to start a new project as i l...",
@@ -106,7 +128,10 @@ if "search_logs" not in st.session_state:
         "can you outline the differences b..."
     ]
 
-# ZILE MA-WHYS NA TEXTS ZAKO ZOTE ZA MWANZO KUKAMILIKA (100% Restored)
+
+# =====================================================================
+# 4. LANGUAGE TEXT
+# =====================================================================
 text_dict = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
@@ -123,6 +148,7 @@ text_dict = {
         "chat_ph": "Type your query here and press enter...",
         "chat_title": "Ya hivi majuzi"
     },
+
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
         "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
@@ -140,84 +166,251 @@ text_dict = {
     }
 }
 
+
 # =====================================================================
-# 3. REAL GOOGLE SIDEBAR INTEGRATION
+# 5. GOOGLE SIDEBAR
 # =====================================================================
 with st.sidebar:
-    st.markdown('<div class="google-brand">G &nbsp; mika chat bot</div>', unsafe_allow_html=True)
-    lang = st.radio("Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
+
+    st.markdown(
+        '<div class="google-brand">G &nbsp; mika chat bot</div>',
+        unsafe_allow_html=True
+    )
+
+    lang = st.radio(
+        "Language / Lugha:",
+        ["English", "Kiswahili"],
+        horizontal=True
+    )
+
     st.write("---")
-    
-    st.markdown('<div class="google-menu-item">📝 Mazungumzo mapya</div>', unsafe_allow_html=True)
-    st.markdown('<div class="google-menu-item">🔍 Tafuta mazungumzo</div>', unsafe_allow_html=True)
-    
-    st.markdown('<div class="google-section-title">Kompyuta ndogo</div>', unsafe_allow_html=True)
-    st.markdown('<div class="google-menu-item">➕ Weka daftari</div>', unsafe_allow_html=True)
-    st.markdown('<div class="google-menu-item">📁 poe business project</div>', unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="google-menu-item">📝 Mazungumzo mapya</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="google-menu-item">🔍 Tafuta mazungumzo</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="google-section-title">Kompyuta ndogo</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="google-menu-item">➕ Weka daftari</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="google-menu-item">📁 poe business project</div>',
+        unsafe_allow_html=True
+    )
+
     st.write("---")
-    
+
     page = st.radio(
         "Chagua Mtazamo:",
-        ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"],
+        [
+            "📈 Executive Overview & Pipeline",
+            "🧠 Simulated n8n Orchestration Core",
+            "💬 Ask MIKA Market Chatbot"
+        ],
         label_visibility="collapsed"
     )
+
     st.write("---")
-    
-    st.markdown(f'<div class="google-section-title">{text_dict[lang]["chat_title"]}</div>', unsafe_allow_html=True)
+
+    st.markdown(
+        f'<div class="google-section-title">{text_dict[lang]["chat_title"]}</div>',
+        unsafe_allow_html=True
+    )
+
     if st.session_state["search_logs"]:
         for idx, log in enumerate(st.session_state["search_logs"]):
-            st.markdown(f'<div class="google-history-item">💬 {log}</div>', unsafe_allow_html=True)
-            
+            st.markdown(
+                f'<div class="google-history-item">💬 {log}</div>',
+                unsafe_allow_html=True
+            )
+
     st.write("---")
+
     clear_action = st.checkbox("🗑️ Clear History & Logs")
+
     if clear_action:
         st.session_state["chat_history"] = []
         st.session_state["search_logs"] = []
         st.rerun()
 
+
 # =====================================================================
-# 4. PRIMARY MAIN PANEL CONTROLLER (100% NO ELSE BLOCKS)
+# 6. PRIMARY MAIN PANEL
 # =====================================================================
 st.title(text_dict[lang]["title"])
 st.caption(text_dict[lang]["desc"])
 st.warning(text_dict[lang]["risk_banner"])
 st.write("---")
 
-# --- VIEW 1: EXECUTIVE OVERVIEW ---
-if page == "📈 Executive Overview & Pipeline":
-    st.header(text_dict[lang]["chart1"])
-    st.dataframe(df_region, use_container_width=True, hide_index=True)
-    
-    fig_region = px.bar(df_region, x="Region Name", y="Total_Sales", color="Region Name", title="Visual representation of Sales Volume per Territory", template="plotly_white")
-    st.plotly_chart(fig_region, use_container_width=True)
-    
-    st.write("---")
-    st.header(text_dict[lang]["chart2"])
-    st.dataframe(df_payment, use_container_width=True, hide_index=True)
-    
-    fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
-    st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION ENGINE LINKED TO REAL IP TARGET ---
+# =====================================================================
+# VIEW 1: EXECUTIVE OVERVIEW
+# =====================================================================
+if page == "📈 Executive Overview & Pipeline":
+
+    st.header(text_dict[lang]["chart1"])
+
+    st.dataframe(
+        df_region,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    fig_region = px.bar(
+        df_region,
+        x="Region Name",
+        y="Total_Sales",
+        color="Region Name",
+        title="Visual representation of Sales Volume per Territory",
+        template="plotly_white"
+    )
+
+    st.plotly_chart(
+        fig_region,
+        use_container_width=True
+    )
+
+    st.write("---")
+
+    st.header(text_dict[lang]["chart2"])
+
+    st.dataframe(
+        df_payment,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    fig_payment = px.pie(
+        df_payment,
+        values="Value Exc. VAT",
+        names="Payment Terms",
+        hole=0.4,
+        title="Credit Term Allocations Share Breakdown"
+    )
+
+    st.plotly_chart(
+        fig_payment,
+        use_container_width=True
+    )
+
+
+# =====================================================================
+# VIEW 2: N8N AUTOMATION ENGINE
+# =====================================================================
 if page == "🧠 Simulated n8n Orchestration Core":
+
     st.subheader(text_dict[lang]["ai_header"])
+
     st.write(text_dict[lang]["ai_prompt"])
-    
-    # Anwani yako halisi ya IP uliyoomba imewekwa hapa kwa uhakika kamili
-    n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://192.168.1.87:8501")
-    
-    if st.button(text_dict[lang]["ai_btn"], type="primary"):
-        st.info(f"Firing outbound transactional payload parameters to n8n line at: {n8n_url}...")
+
+    n8n_url = st.text_input(
+        "n8n Webhook URL Target Endpoint:",
+        value="http://192.168.1.87:8501"
+    )
+
+    if st.button(
+        text_dict[lang]["ai_btn"],
+        type="primary"
+    ):
+
+        st.info(
+            f"Firing outbound transactional payload parameters "
+            f"to n8n line at: {n8n_url}..."
+        )
+
         try:
+
             payload = {
                 "source": "streamlit_command_center",
                 "region_matrix": region_csv,
                 "payment_matrix": payment_csv
             }
-            response = requests.post(n8n_url, json=payload, timeout=8)
+
+            response = requests.post(
+                n8n_url,
+                json=payload,
+                timeout=8
+            )
+
             if response.status_code == 200:
-                st.success("✅ n8n Pipeline completed execution step successfully!")
-                st.json(response.json() if response.headers.get("content-type") == "application/json" else {"response": response.text})
-            if response.status_code != 200:
-                st.error(f"❌ Automation server returned code: {response.status_code}")
+
+                st.success(
+                    "✅ n8n Pipeline completed execution step successfully!"
+                )
+
+                content_type = response.headers.get(
+                    "content-type",
+                    ""
+                )
+
+                if "application/json" in content_type:
+                    st.json(response.json())
+                else:
+                    st.json({
+                        "response": response.text
+                    })
+
+            else:
+
+                st.error(
+                    f"❌ Automation server returned code: "
+                    f"{response.status_code}"
+                )
+
+        except requests.exceptions.RequestException as e:
+
+            st.error(
+                f"❌ Could not connect to the n8n automation server: {e}"
+            )
+
         except Exception as e:
+
+            st.error(
+                f"❌ Unexpected automation error: {e}"
+            )
+
+
+# =====================================================================
+# VIEW 3: ASK MIKA MARKET CHATBOT
+# =====================================================================
+if page == "💬 Ask MIKA Market Chatbot":
+
+    st.subheader(text_dict[lang]["chat_header"])
+
+    st.write(text_dict[lang]["chat_desc"])
+
+    user_query = st.text_input(
+        text_dict[lang]["chat_ph"]
+    )
+
+    if user_query:
+
+        st.session_state["chat_history"].append(
+            {
+                "role": "user",
+                "content": user_query
+            }
+        )
+
+        st.markdown(
+            f'<div class="chat-user-row">👤 {user_query}</div>',
+            unsafe_allow_html=True
+        )
+
+        st.info(
+            "MIKA chatbot response engine is ready for connection "
+            "to your AI provider."
+        )
+```

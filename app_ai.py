@@ -78,7 +78,7 @@ text = {
         "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
         "m1": "📦 Jumla ya Mapato Yaliyothibitishwa",
         "m2": "📈 Lengo Rasmi la Mauzo",
-        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji wa kifedha wa haraka.",
+        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji vya kifedha wa haraka.",
         "chart1": "🌍 Uchangiaji wa Mauzo Kimkoa",
         "chart2": "💳 Masharti ya Malipo na Hali ya ukwasi wa Mtaji",
         "ai_header": "🧠 Mfumo wa Kiotomatiki wa n8n",
@@ -91,7 +91,7 @@ text = {
     }
 }
 
-# 3. SIDEBAR MULTI-PAGE ENGINE & LIVE CHAT HISTORY SIDEBAR
+# 3. SIDEBAR MULTI-PAGE ENGINE
 with st.sidebar:
     st.header("⚡ Command Center")
     lang = st.radio("🌐 Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
@@ -102,27 +102,6 @@ with st.sidebar:
         ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
     )
     st.write("---")
-    
-    # ⏳ DYNAMIC SIDEBAR HISTORY ENGINE
-    if page == "💬 Ask MIKA Market Chatbot":
-        st.subheader("📝 Ya hivi majuzi" if lang == "Kiswahili" else "📝 Recent Chats")
-        
-        # 🗑️ Micro-Erase Clear Button inside the Sidebar layout
-        if st.button("🗑️ Clear History" if lang == "English" else "🗑️ Safisha Kumbukumbu"):
-            st.session_state["chat_history"] = []
-            st.rerun()
-            
-        st.write("---")
-        if not st.session_state["chat_history"]:
-            st.caption("No recent conversations." if lang == "English" else "Hakuna mazungumzo ya hivi karibuni.")
-        else:
-            # Displays user's previous questions cleanly on the sidebar rows
-            for idx, chat in enumerate(st.session_state["chat_history"]):
-                if chat["role"] == "user":
-                    short_text = chat["text"][:28] + "..." if len(chat["text"]) > 28 else chat["text"]
-                    st.caption(f"🔍 {short_text}")
-        st.write("---")
-        
     st.caption("MIKA Automation Infrastructure Layer Active.")
 
 
@@ -135,14 +114,13 @@ st.write("---")
 # --- VIEW 1: EXECUTIVE DASHBOARD ---
 if page == "📈 Executive Overview & Pipeline":
     st.subheader(text[lang]["chart1"])
-    # HAPA PALIKUWA NA INDENTATION ERROR - Sasa hivi pamepangiliwa vizuri kabisa!
     st.dataframe(df_region, use_container_width=True, hide_index=True)
     
     st.subheader(text[lang]["chart2"])
     st.dataframe(df_payment, use_container_width=True, hide_index=True)
 
 # --- VIEW 2: N8N SIMULATED CORE ---
-elif page == "🧠 Simulated n8n Orchestration Core":
+if page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
     st.write(text[lang]["ai_prompt"])
     if st.button(text[lang]["ai_btn"]):
@@ -151,16 +129,17 @@ elif page == "🧠 Simulated n8n Orchestration Core":
         st.info(text[lang]["ai_idle"])
 
 # --- VIEW 3: ASK MIKA CHATBOT ---
-elif page == "💬 Ask MIKA Market Chatbot":
+if page == "💬 Ask MIKA Market Chatbot":
     st.subheader(text[lang]["chat_header"])
     st.write(text[lang]["chat_desc"])
     
     # Render historical chat log bubbles from memory
-    for chat in st.session_state["chat_history"]:
-        if chat["role"] == "user":
-            st.markdown(f'<div class="user-bubble"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
-        else:
-            st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+    if st.session_state["chat_history"]:
+        for chat in st.session_state["chat_history"]:
+            if chat["role"] == "user":
+                st.markdown(f'<div class="user-bubble"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+            if chat["role"] == "mika":
+                st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
             
     # Input field to send new queries
     user_query = st.text_input(text[lang]["chat_ph"], key="chatbot_input_box")

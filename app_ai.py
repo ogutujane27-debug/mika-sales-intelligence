@@ -316,7 +316,7 @@ if page == "🧠 Simulated n8n Orchestration Core":
         response_data = ""
         response_code = 0
 
-        try:
+                try:
             payload = {
                 "source": "streamlit_command_center",
                 "region_matrix": region_csv,
@@ -338,9 +338,9 @@ if page == "🧠 Simulated n8n Orchestration Core":
                     "✅ n8n Pipeline completed execution step successfully!"
                 )
 
-                if "application/json" in response.headers.get(
-                    "content-type", ""
-                ):
+                content_type = response.headers.get("content-type", "")
+
+                if "application/json" in content_type:
                     st.json(response.json())
                 else:
                     st.write(response.text)
@@ -359,4 +359,3 @@ if page == "🧠 Simulated n8n Orchestration Core":
             st.error(
                 f"❌ Unexpected automation error: {e}"
             )
-            

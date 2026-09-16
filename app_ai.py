@@ -160,7 +160,7 @@ text_dict = {
         "ai_idle": "💡 Mfumo wa n8n: Hausumbuki. Unasubiri amri yako.",
         "chat_header": "💬 Uliza MIKA — Chatbot ya Soko la Kimataifa",
         "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu wa bidhaa nchini Kenya.",
-        "chat_ph": "Andika swali lako hapa na ubonyeze enter...",
+        "chat_ph": "Andika swaliako hapa na ubonyeze enter...",
         "chat_title": "Ya hivi majuzi"
     }
 }
@@ -253,162 +253,37 @@ st.caption(text_dict[lang]["desc"])
 st.warning(text_dict[lang]["risk_banner"])
 st.write("---")
 
-
-# =====================================================================
-# VIEW 1: EXECUTIVE OVERVIEW
-# =====================================================================
+# --- VIEW 1: EXECUTIVE OVERVIEW ---
 if page == "📈 Executive Overview & Pipeline":
-
     st.header(text_dict[lang]["chart1"])
-
-    st.dataframe(
-        df_region,
-        use_container_width=True,
-        hide_index=True
-    )
-
-    fig_region = px.bar(
-        df_region,
-        x="Region Name",
-        y="Total_Sales",
-        color="Region Name",
-        title="Visual representation of Sales Volume per Territory",
-        template="plotly_white"
-    )
-
-    st.plotly_chart(
-        fig_region,
-        use_container_width=True
-    )
-
+    st.dataframe(df_region, use_container_width=True, hide_index=True)
+    
+    fig_region = px.bar(df_region, x="Region Name", y="Total_Sales", color="Region Name", title="Visual representation of Sales Volume per Territory", template="plotly_white")
+    st.plotly_chart(fig_region, use_container_width=True)
+    
     st.write("---")
-
     st.header(text_dict[lang]["chart2"])
+    st.dataframe(df_payment, use_container_width=True, hide_index=True)
+    
+    fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
+    st.plotly_chart(fig_payment, use_container_width=True)
 
-    st.dataframe(
-        df_payment,
-        use_container_width=True,
-        hide_index=True
-    )
-
-    fig_payment = px.pie(
-        df_payment,
-        values="Value Exc. VAT",
-        names="Payment Terms",
-        hole=0.4,
-        title="Credit Term Allocations Share Breakdown"
-    )
-
-    st.plotly_chart(
-        fig_payment,
-        use_container_width=True
-    )
-
-
-# =====================================================================
-# VIEW 2: N8N AUTOMATION ENGINE
-# =====================================================================
+# --- VIEW 2: REAL N8N AUTOMATION WITH REAL IP TARGET ---
 if page == "🧠 Simulated n8n Orchestration Core":
-
     st.subheader(text_dict[lang]["ai_header"])
-
     st.write(text_dict[lang]["ai_prompt"])
-
-    n8n_url = st.text_input(
-        "n8n Webhook URL Target Endpoint:",
-        value="http://192.168.1.87:8501"
-    )
-
-    if st.button(
-        text_dict[lang]["ai_btn"],
-        type="primary"
-    ):
-
-        st.info(
-            f"Firing outbound transactional payload parameters "
-            f"to n8n line at: {n8n_url}..."
-        )
-
+    
+    # Anwani yako halisi ya IP imewekwa hapa kikamilifu
+    n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://192.168.1.87:8501")
+    
+    if st.button(text_dict[lang]["ai_btn"], type="primary"):
+        st.info(f"Firing outbound transactional payload parameters to n8n line at: {n8n_url}...")
         try:
-
             payload = {
                 "source": "streamlit_command_center",
                 "region_matrix": region_csv,
                 "payment_matrix": payment_csv
             }
-
-            response = requests.post(
-                n8n_url,
-                json=payload,
-                timeout=8
-            )
-
+            response = requests.post(n8n_url, json=payload, timeout=8)
             if response.status_code == 200:
-
-                st.success(
-                    "✅ n8n Pipeline completed execution step successfully!"
-                )
-
-                content_type = response.headers.get(
-                    "content-type",
-                    ""
-                )
-
-                if "application/json" in content_type:
-                    st.json(response.json())
-                else:
-                    st.json({
-                        "response": response.text
-                    })
-
-            else:
-
-                st.error(
-                    f"❌ Automation server returned code: "
-                    f"{response.status_code}"
-                )
-
-        except requests.exceptions.RequestException as e:
-
-            st.error(
-                f"❌ Could not connect to the n8n automation server: {e}"
-            )
-
-        except Exception as e:
-
-            st.error(
-                f"❌ Unexpected automation error: {e}"
-            )
-
-
-# =====================================================================
-# VIEW 3: ASK MIKA MARKET CHATBOT
-# =====================================================================
-if page == "💬 Ask MIKA Market Chatbot":
-
-    st.subheader(text_dict[lang]["chat_header"])
-
-    st.write(text_dict[lang]["chat_desc"])
-
-    user_query = st.text_input(
-        text_dict[lang]["chat_ph"]
-    )
-
-    if user_query:
-
-        st.session_state["chat_history"].append(
-            {
-                "role": "user",
-                "content": user_query
-            }
-        )
-
-        st.markdown(
-            f'<div class="chat-user-row">👤 {user_query}</div>',
-            unsafe_allow_html=True
-        )
-
-        st.info(
-            "MIKA chatbot response engine is ready for connection "
-            "to your AI provider."
-        )
+                st.success("✅ n8n Pipeline completed execution step successfully!")

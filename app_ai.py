@@ -268,7 +268,7 @@ if page == "📈 Executive Overview & Pipeline":
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION WITH REAL IP TARGET ---
+# --- VIEW 2: REAL N8N AUTOMATION WITH CLEAN BLOCK RULES ---
 if page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])
@@ -277,6 +277,12 @@ if page == "🧠 Simulated n8n Orchestration Core":
     
     if st.button(text_dict[lang]["ai_btn"], type="primary"):
         st.info(f"Firing outbound transactional payload parameters to n8n line at: {n8n_url}...")
+        
+        # Initialize default container variables safely
+        response_success = False
+        response_data = ""
+        response_code = 0
+        
         try:
             payload = {
                 "source": "streamlit_command_center",
@@ -284,5 +290,73 @@ if page == "🧠 Simulated n8n Orchestration Core":
                 "payment_matrix": payment_csv
             }
             response = requests.post(n8n_url, json=payload, timeout=8)
-            if response.status_code == 200:
-                st.success("✅ n8n Pipeline completed execution step successfully!")
+            response_code = response.status_code
+
+# --- VIEW 2: REAL N8N AUTOMATION WITH CLEAN BLOCK RULES ---
+if page == "🧠 Simulated n8n Orchestration Core":
+    st.subheader(text_dict[lang]["ai_header"])
+    st.write(text_dict[lang]["ai_prompt"])
+
+    n8n_url = st.text_input(
+        "n8n Webhook URL Target Endpoint:",
+        value="http://192.168.1.87:8501"
+    )
+
+    if st.button(
+        text_dict[lang]["ai_btn"],
+        type="primary"
+    ):
+        st.info(
+            f"Firing outbound transactional payload parameters "
+            f"to n8n line at: {n8n_url}..."
+        )
+
+        # Initialize default container variables safely
+        response_success = False
+        response_data = ""
+        response_code = 0
+
+        try:
+            payload = {
+                "source": "streamlit_command_center",
+                "region_matrix": region_csv,
+                "payment_matrix": payment_csv
+            }
+
+            response = requests.post(
+                n8n_url,
+                json=payload,
+                timeout=8
+            )
+
+            response_code = response.status_code
+
+            if response_code == 200:
+                response_success = True
+
+                st.success(
+                    "✅ n8n Pipeline completed execution step successfully!"
+                )
+
+                if "application/json" in response.headers.get(
+                    "content-type", ""
+                ):
+                    st.json(response.json())
+                else:
+                    st.write(response.text)
+
+            else:
+                st.error(
+                    f"❌ Automation server returned code: {response_code}"
+                )
+
+        except requests.exceptions.RequestException as e:
+            st.error(
+                f"❌ Could not connect to the n8n automation server: {e}"
+            )
+
+        except Exception as e:
+            st.error(
+                f"❌ Unexpected automation error: {e}"
+            )
+            

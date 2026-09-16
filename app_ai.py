@@ -18,7 +18,7 @@ st.markdown("""
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
+        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 50px;
         font-size: 16px !important;
     }
     </style>
@@ -191,7 +191,6 @@ else:
             try:
                 client = Groq()
                 
-                # FIXED BLOCK: Mstari mmoja uliogawanywa kwa usalama bila kuvuruga mabano ya kodi ya Python
                 context_prompt = (
                     f"You are the MIKA Limitless Corporate Chatbot Core. "
                     f"Electronics market assistant in Kenya. "
@@ -204,3 +203,5 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}."
                 )
                 
+                completion = client.chat.completions.create(
+                    model="groq/compound",

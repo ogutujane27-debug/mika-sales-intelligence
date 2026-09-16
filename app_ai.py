@@ -172,7 +172,7 @@ elif page == "🧠 Real-Time AI Management Brain":
                 st.write("---")
                 st.markdown(completion.choices.message.content)
                 
-            except Exception as e:
+                        except Exception as e:
                 st.error(f"AI Server Connection Error: {e}")
     else:
         st.info(text[lang]["ai_idle"])
@@ -204,3 +204,14 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}."
                 )
                 
+                completion = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[{"role": "user", "content": context_prompt}]
+                )
+                
+                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
+                st.write("---")
+                st.markdown(completion.choices.message.content)
+                
+            except Exception as e:
+                st.error(f"Chatbot Communication Failure: {e}")

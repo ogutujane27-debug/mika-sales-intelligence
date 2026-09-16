@@ -18,8 +18,12 @@ st.markdown("""
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
+        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 50px;
         font-size: 16px !important;
+    }
+    .stDownloadButton>button {
+        background-color: #007bff !important; color: white !important; font-weight: bold !important;
+        box-shadow: 0 4px 15px rgba(0,123,255,0.25); border-radius: 6px !important; width: 100%; height: 45px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -57,7 +61,7 @@ with st.sidebar:
     st.write("---")
     st.caption("MIKA Automation Infrastructure Layer Active.")
 
-# Localized app dictionary strings (CLEANED FROM PHASE 16/18 LABELS)
+# Localized app dictionary strings (CLEANED FROM KIUFUNDI BACKEND LABELS)
 text = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
@@ -132,10 +136,32 @@ if page == "📈 Executive Overview & Pipeline":
     st.write("---")
     st.subheader("📁 Verified Master Region Data Register")
     st.dataframe(df_region, use_container_width=True, hide_index=True)
+    
+    # 📥 THE BRAND NEW DOWNLOAD ENGINE FOR EXECUTIVE MANAGEMENT BOARD
+    st.write("---")
+    raw_briefing_text = (
+        "MIKA GLOBAL EXECUTIVE EXECUTIVE SUMMARY\n\n"
+        "1. FINANCIAL AUDIT CONTROLS:\n"
+        "- Total Verified Operational Revenue Log: KSh 2,888,966,390.88\n"
+        "- Official System Sales Target Source: KSh 1,684,717,184.70\n"
+        "Note: These financial pools belong to separate recording streams and must NOT be added together.\n\n"
+        "2. RISK EXPOSURE & DATA QUALITY ASSESSMENT:\n"
+        "- Market Concentration: Nairobi Region dominates the landscape at KSh 1.43B (49.46% of total revenue).\n"
+        "- Data Quality Exposure: 89.87% (KSh 2.60B) of transaction lines currently lack stockist data tags.\n\n"
+        "3. WHAT-IF SCENARIO STRATEGIC VALUE:\n"
+        "- Implementing an ingestion tracking logic for Nairobi's pool immediately cuts operational credit risk exposure by KSh 42.9 Million and optimizes cash liquidity reserves."
+    )
+    
+    st.download_button(
+        label="📥 Download Executive Briefing (TXT Report)" if lang == "English" else "📥 Pakua Muhtasari wa Ripoti (TXT)",
+        data=raw_briefing_text,
+        file_name="MIKA_Executive_Management_Briefing.txt",
+        mime="text/plain"
+    )
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN AI REPORT GENERATOR
+# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
 # ==========================================
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
@@ -172,76 +198,4 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
             """
             
-            # REPLACED: Mfumo thabiti na rasmi wa modeli mpya ya Groq ya mwaka 2026
             completion = client.chat.completions.create(
-                model="openai/gpt-oss-120b",
-                messages=[{"role": "user", "content": prompt_instructions}]
-            )
-            
-            status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
-            st.write("---")
-            
-            ai_report = completion.choices[0].message.content
-            st.markdown(ai_report)
-            
-            st.write("---")
-            st.subheader("📱 Automated Management Broadcast Alert Payload")
-            
-            board_alert = (
-                "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
-                "Dear Directors,\n"
-                f"The weekly sales data audit has been compiled successfully via automation.\n\n"
-                "💰 *Key Portfolio Performance:*\n"
-                "- Total Verified Revenue: KSh 2.89 Billion.\n"
-                "- Nairobi Hub Market Share: 49.46% (Dominant Sub-Region).\n\n"
-                "⚠️ *Critical Data Tracking Alert:*\n"
-                "- 89.87% (KSh 2.60B) of transaction lines currently lack identified stockist data. This requires immediate automation logic mitigation to secure tracing controls.\n\n"
-                "🌐 Deployed Control Center: https://streamlit.app"
-            )
-            
-            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
-            
-        except Exception as e:
-            st.error(f"AI Server Connection Error: {e}")
-    else:
-        st.info(text[lang]["ai_idle"])
-
-
-# ==========================================
-# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT
-# ==========================================
-else:
-    st.subheader(text[lang]["chat_header"])
-    st.write(text[lang]["chat_desc"])
-    
-    user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
-    
-    if user_query:
-        with st.spinner("MIKA Core Engine is scanning market variables..."):
-            try:
-                client = Groq()
-                
-                context_prompt = (
-                    f"You are the MIKA Limitless Corporate Chatbot Core. "
-                    f"Electronics market assistant in Kenya. "
-                    f"Internal Figures: Total Transaction Revenue KSh 2.89 Billion (Nairobi dominates at 49.46%%), "
-                    f"Official Target Total KSh 1.68 Billion (Do NOT mix these scopes). "
-                    f"Exposure: 89.87%% of data lacks stockist info. "
-                    f"Competitors in Kenya: MIKA (Our brand), Samsung (Premium pricing, high visual ads), "
-                    f"LG Electronics (High brand equity), Ramtons (Aggressive pricing in Naivas/Quickmart), "
-                    f"Hisense (Cooling tier), Alyassin (Rural footprints). "
-                    f"User query: {user_query}. Respond fully and professionally in language: {lang}. Do not mention Phase 16 or Phase 18 labels."
-                )
-                
-                # REPLACED: Mfumo thabiti na rasmi wa modeli mpya ya Groq ya mwaka 2026 kwa ajili ya Chatbot live
-                completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
-                st.write("---")
-                st.markdown(completion.choices[0].message.content)
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")

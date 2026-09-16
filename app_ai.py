@@ -191,13 +191,8 @@ else:
             try:
                 client = Groq()
                 
-                # FIXED BLOCK: Muundo salama usio na f-string ndefu inayovuruga mabano ya kodi
-                context_prompt = (
-                    "You are the MIKA Limitless Corporate Chatbot Core, a world-class electronics market research agent, logistics analyst, and strategy consultant in Kenya.\n"
-                    "You are speaking to executive managers and Asian multinational partners.\n"
-                    "Internal Figures:\n"
-                    "- Transaction Total (Phase 16): KSh 2.89 Billion (Nairobi dominates at 49.46%).\n"
-                    "- Official Source Total (Phase 18): KSh 1.68 Billion (NEVER combine these separate scopes!).\n"
-                    "- Tracking Exposure: 89.87% (KSh 2.60B) of data lacks stockist info.\n\n"
-                    "Market Landscape & Competitor Brand Knowledge:\n"
-                    "- MIKA: Our brand, strong Nairobi presence, needs stockist automation.\n"
+                # FIXED: Mstari umenyooka kwa f-string moja thabiti isiyo na mabano ya kodi yanayovuruga Python
+                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core. You serve as a world-class electronics market research agent and strategy consultant in Kenya. Internal Figures: P16 Transaction Total KSh 2.89 Billion (Nairobi dominates at 49.46%), P18 Official Source Total KSh 1.68 Billion (NEVER combine separate scopes). Tracing Exposure: 89.87% of data lacks stockist info. Competitor Brands in Kenya: MIKA (Our brand), Samsung (Premium pricing, high visual ads), LG Electronics (High brand equity), Ramtons (Aggressive pricing in Naivas/Quickmart), Hisense (Cooling/display tier), Alyassin (Rural footprints). User submitted query: {user_query}. Respond fully and professionally in the interface language: {lang}."
+                
+                completion = client.chat.completions.create(
+                    model="groq/compound",

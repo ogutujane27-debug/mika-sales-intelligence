@@ -135,14 +135,13 @@ if page == "📈 Executive Overview & Pipeline":
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
+# PAGE VIEW 2: FULL-SCREEN AI REPORT GENERATOR
 # ==========================================
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
     st.write(text[lang]["ai_prompt"])
     
     if st.button(text[lang]["ai_btn"]):
-        # SIMULATING THE n8n STEP-BY-STEP WORKFLOW STEPS VISUALLY
         status_box = st.empty()
         status_box.info("🔗 [n8n Node 1/4] Triggered: Fetching new raw sales data sheet from system logs...")
         import time
@@ -181,11 +180,9 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            # THE EXECUTIVE READY REPORT (CLEANED)
-            ai_report = completion.choices[0].message.content
+            ai_report = completion.choices.message.content
             st.markdown(ai_report)
             
-            # CLEAN EXECUTIVE NOTIFICATION TEXT AREA FOR RECRUITERS / MANAGEMENT
             st.write("---")
             st.subheader("📱 Automated Management Broadcast Alert Payload")
             
@@ -201,3 +198,48 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 "🌐 Deployed Control Center: https://streamlit.app"
             )
             
+            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
+            
+        except Exception as e:
+            st.error(f"AI Server Connection Error: {e}")
+    else:
+        st.info(text[lang]["ai_idle"])
+
+
+# ==========================================
+# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT
+# ==========================================
+else:
+    st.subheader(text[lang]["chat_header"])
+    st.write(text[lang]["chat_desc"])
+    
+    user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
+    
+    if user_query:
+        with st.spinner("MIKA Core Engine is scanning market variables..."):
+            try:
+                client = Groq()
+                
+                context_prompt = (
+                    f"You are the MIKA Limitless Corporate Chatbot Core. "
+                    f"Electronics market assistant in Kenya. "
+                    f"Internal Figures: Total Transaction Revenue KSh 2.89 Billion (Nairobi dominates at 49.46%%), "
+                    f"Official Target Total KSh 1.68 Billion (Do NOT mix these scopes). "
+                    f"Exposure: 89.87%% of data lacks stockist info. "
+                    f"Competitors in Kenya: MIKA (Our brand), Samsung (Premium pricing, high visual ads), "
+                    f"LG Electronics (High brand equity), Ramtons (Aggressive pricing in Naivas/Quickmart), "
+                    f"Hisense (Cooling tier), Alyassin (Rural footprints). "
+                    f"User query: {user_query}. Respond fully and professionally in language: {lang}. Do not mention Phase 16 or Phase 18 labels."
+                )
+                
+                completion = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=[{"role": "user", "content": context_prompt}]
+                )
+                
+                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
+                st.write("---")
+                st.markdown(completion.choices.message.content)
+                
+            except Exception as e:
+                st.error(f"Chatbot Communication Failure: {e}")

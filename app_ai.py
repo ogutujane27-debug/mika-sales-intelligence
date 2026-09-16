@@ -18,7 +18,7 @@ st.markdown("""
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
+        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 50px;
         font-size: 16px !important;
     }
     </style>
@@ -89,7 +89,7 @@ text = {
         "ai_idle": "💡 Seva ya AI iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
         "chat_header": "💬 Uliza MIKA — Chatbot Huru ya Akili ya Soko",
         "chat_desc": "Uliza swali lolote la kibiashara, washindani (Samsung, LG, Ramtons, Hisense), stoo kupungua, au mwenendo wa soko la Kenya.",
-        "chat_ph": "Andika swaliako hapa kwa lugha yoyote..."
+        "chat_ph": "Andika swali lako hapa kwa lugha yoyote..."
     }
 }
 
@@ -162,8 +162,9 @@ elif page == "🧠 Real-Time AI Management Brain":
                 3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
                 """
                 
+                # REPLACED: Jina jipya la modeli thabiti mtandaoni
                 completion = client.chat.completions.create(
-                    model="llama3-8b-8192",
+                    model="llama-3.1-8b-instant",
                     messages=[{"role": "user", "content": prompt_instructions}]
                 )
                 
@@ -203,14 +204,3 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}."
                 )
                 
-                completion = client.chat.completions.create(
-                    model="llama3-8b-8192",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
-                st.write("---")
-                st.markdown(completion.choices.message.content)
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")

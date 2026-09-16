@@ -4,9 +4,10 @@ import plotly.express as px
 from groq import Groq
 import io
 
-# 1. ENTERPRISE LEVEL CONFIGURATION
+# 1. ENTERPRISE SUITE INITIALIZATION
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
+# Premium CSS parsing for fluid animations and premium executive chat layout
 st.markdown("""
     <style>
     @keyframes slideUp { 
@@ -15,20 +16,20 @@ st.markdown("""
     }
     .block-container { padding-top: 1rem; padding-bottom: 1rem; }
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
+    
+    /* Green Run/Execute button theme */
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
         box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
     }
-    .stDownloadButton>button {
-        background-color: #007bff !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(0,123,255,0.25); border-radius: 6px !important; width: 100%; height: 45px;
-    }
+    
+    /* Speech bubble styles for history panel */
     .user-bubble { background-color: #e2f0d9; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; font-family: sans-serif; }
     .mika-bubble { background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; font-family: sans-serif; }
     </style>
 """, unsafe_allow_html=True)
 
-# 2. SOURCE DATA MATRIX POOLS
+# 2. REAL CORPORATE DATA MATRIX POOLS
 region_csv = """Region Name,Total_Sales,Outlet_Count,Pct_of_Total
 NAIROBI REGION,1429021702.88,162,49.46
 COAST REGION,467868246.57,6,16.20
@@ -48,20 +49,20 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
-# 3. SIDEBAR NAVIGATION CONTROLS
+# 3. SIDEBAR MULTI-PAGE ENGINE
 with st.sidebar:
     st.header("⚡ Command Center")
     lang = st.radio("🌐 Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
-    page = st.sidebar.radio(
+    page = st.radio(
         "Select Dashboard View:" if lang == "English" else "Chagua Mtazamo:",
         ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
     )
     st.write("---")
-    st.caption("MIKA Infrastructure Verification Active.")
+    st.caption("MIKA Automation Infrastructure Layer Active.")
 
-# Translation matrix
+# Localized app dictionary strings
 text = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
@@ -77,7 +78,7 @@ text = {
         "ai_idle": "💡 Local n8n Simulator Core: Idle. Pipeline waiting for execution command.",
         "chat_header": "💬 Ask MIKA — Limitless Market Intelligence Chatbot",
         "chat_desc": "Ask any business, competitor (Samsung, LG, Ramtons, Hisense, Alyassin), supply chain, stockout, or market query related to Kenya.",
-        "chat_ph": "Type your query here and press enter..."
+        "chat_ph": "Type your query here or choose a top search below..."
     },
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
@@ -93,7 +94,7 @@ text = {
         "ai_idle": "💡 Seva ya n8n Simulator iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
         "chat_header": "💬 Uliza MIKA — Chatbot Huru ya Akili ya Soko",
         "chat_desc": "Uliza swali lolote la kibiashara, washindani (Samsung, LG, Ramtons, Hisense), stoo kupungua, au mwenendo wa soko la Kenya.",
-        "chat_ph": "Andika swali lako hapa kisha ubonyeze enter..."
+        "chat_ph": "Andika swali lako hapa au chagua maswali maarufu chini..."
     }
 }
 
@@ -101,7 +102,7 @@ st.title(text[lang]["title"])
 st.write(text[lang]["desc"])
 st.write("---")
 
-# EXECUTIVE METRICS ROW
+# HIGH-LEVEL EXECUTIVE KPI METRICS
 col_m1, col_m2, col_m3 = st.columns(3)
 with col_m1:
     st.metric(label=text[lang]["m1"], value="KSh 2.89B", delta="Verified Analytics Active")
@@ -113,7 +114,7 @@ st.write("---")
 
 
 # ==========================================
-# PAGE VIEW 1: EXECUTIVE PERFORMANCE METRICS
+# PAGE VIEW 1: EXECUTIVE OVERVIEW & PIPELINE
 # ==========================================
 if page == "📈 Executive Overview & Pipeline":
     st.warning(text[lang]["risk_banner"])
@@ -147,6 +148,7 @@ if page == "📈 Executive Overview & Pipeline":
         "- Market Concentration: Nairobi Region dominates at KSh 1.43B (49.46% of total revenue).\n"
         "- Data Quality Exposure: 89.87% (KSh 2.60B) of transaction lines currently lack stockist data tags."
     )
+    
     st.download_button(
         label="📥 Download Executive Briefing" if lang == "English" else "📥 Pakua Muhtasari wa Ripoti",
         data=raw_briefing_text,
@@ -156,7 +158,7 @@ if page == "📈 Executive Overview & Pipeline":
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN AUTOMATION PIPELINE VIEW
+# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
 # ==========================================
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
@@ -187,12 +189,13 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            ai_report_text = completion.choices[0].message.content
-            st.markdown(ai_report_text)
+            ai_report = completion.choices.message.content
+            st.markdown(ai_report)
             
             st.write("---")
             st.subheader("📱 Automated Management Broadcast Alert Payload")
             
+            # FIXED: Amri ya board_alert imefungwa kwa usahihi wa asilimia 100 hapa chini!
             board_alert = (
                 "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
                 "Dear Directors,\n"
@@ -200,4 +203,3 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 "💰 *Key Portfolio Performance:*\n"
                 "- Total Verified Revenue: KSh 2.89 Billion.\n"
                 "- Nairobi Hub Market Share: 49.46%.\n\n"
-                "⚠️ *Critical Data Tracking Alert:*\n"

@@ -195,7 +195,6 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             st.write("---")
             st.subheader("📱 Automated Management Broadcast Alert Payload")
             
-            # FIXED: Mabano ya board_alert sasa yamefungwa kwa usahihi thabiti hapa chini!
             board_alert = (
                 "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
                 "Dear Directors,\n"
@@ -205,7 +204,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 "- Nairobi Hub Market Share: 49.46%.\n\n"
                 "⚠️ *Critical Data Tracking Alert:*\n"
                 "- 89.87% lack identified stockist data. Requires immediate automation controls.\n\n"
-                "🌐 Deployed Control Center: https://mika-sales-intelligence.streamlit.app"
+                "🌐 Deployed Control Center: https://streamlit.app"
             )
             
             st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)

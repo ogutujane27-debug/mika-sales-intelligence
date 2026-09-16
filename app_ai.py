@@ -18,7 +18,7 @@ st.markdown("""
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 50px;
+        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
         font-size: 16px !important;
     }
     </style>
@@ -52,41 +52,41 @@ with st.sidebar:
     
     page = st.radio(
         "Select Dashboard View:" if lang == "English" else "Chagua Mtazamo:",
-        ["📈 Executive Overview & Pipeline", "🧠 Real-Time AI Management Brain", "💬 Ask MIKA Market Chatbot"]
+        ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
     )
     st.write("---")
-    st.caption("Reporting Controls Active: Separate Scopes Maintained.")
+    st.caption("MIKA Automation Infrastructure Layer Active.")
 
-# Localized app dictionary strings
+# Localized app dictionary strings (CLEANED FROM PHASE 16/18 LABELS)
 text = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
-        "desc": "Automated system processing transactional (P16: KSh 2.89B) and source logs (P18: KSh 1.68B) independently.",
-        "m1": "📦 Transactional Analysis",
-        "m2": "📈 Official 2026 Source",
-        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data. This is a traceability concern, not an immediate financial loss.",
+        "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
+        "m1": "📦 Total Verified Revenue",
+        "m2": "📈 Official Source Target",
+        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of sales lack stockist parameters. This is a tracking concern, not an immediate financial loss.",
         "chart1": "🌍 Regional Market Share & Contribution",
         "chart2": "💳 Credit Terms & Liquidity Exposure Pipeline",
-        "ai_header": "🧠 Real-Time AI Management Brain Screen",
-        "ai_prompt": "Click the button below to stream localized management insights directly from the AI server.",
-        "ai_btn": "🚀 Run Deep Enterprise Analysis",
-        "ai_idle": "💡 AI Core Status: Idle. Click the button to analyze data pools.",
+        "ai_header": "🧠 Simulated n8n Automation & Audit Engine",
+        "ai_prompt": "Activate the simulated backend node pipeline to clean raw records and stream insights.",
+        "ai_btn": "🚀 Trigger Local n8n Orchestration Pipeline",
+        "ai_idle": "💡 Local n8n Simulator Core: Idle. Pipeline waiting for execution command.",
         "chat_header": "💬 Ask MIKA — Limitless Market Intelligence Chatbot",
         "chat_desc": "Ask any business, competitor (Samsung, LG, Ramtons, Hisense, Alyassin), supply chain, stockout, or market query related to Kenya.",
         "chat_ph": "Type your query here in any language..."
     },
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
-        "desc": "Mfumo wa kiotomatiki unaochakata miamala (Awamu ya 16: KSh 2.89B) na vyanzo rasmi (Awamu ya 18: KSh 1.68B) kando.",
-        "m1": "📦 Uchambuzi wa Miamala",
-        "m2": "📈 Chanzo Rasmi cha 2026",
+        "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
+        "m1": "📦 Jumla ya Mapato Yaliyothibitishwa",
+        "m2": "📈 Lengo Rasmi la Mauzo",
         "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za stockist. Hili ni tatizo la ufuatiliaji wa data.",
         "ch1": "🌍 Mgawo wa Soko na Mchango wa Mikoa",
         "ch2": "💳 Mzunguko wa Mikopo na Vihatarishi vya Ukwasi",
-        "ai_header": "🧠 Seva ya Uchambuzi ya AI ya Muda Halisi",
-        "ai_prompt": "Bonyeza kitufe kilicho chini ili kupokea muhtasari wa kiutendaji kutoka kwenye seva ya AI.",
-        "ai_btn": "🚀 Washa Uchambuzi wa AI",
-        "ai_idle": "💡 Seva ya AI iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
+        "ai_header": "🧠 Mfumo wa Kiotomatiki wa n8n Simulator & Ukaguzi",
+        "ai_prompt": "Washa mtiririko wa kiotomatiki wa ndani ili kusafisha kumbukumbu na kumwaga ripoti rasmi.",
+        "ai_btn": "🚀 Trigger Local n8n Orchestration Pipeline",
+        "ai_idle": "💡 Seva ya n8n Simulator iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
         "chat_header": "💬 Uliza MIKA — Chatbot Huru ya Akili ya Soko",
         "chat_desc": "Uliza swali lolote la kibiashara, washindani (Samsung, LG, Ramtons, Hisense), stoo kupungua, au mwenendo wa soko la Kenya.",
         "chat_ph": "Andika swali lako hapa kwa lugha yoyote..."
@@ -100,9 +100,9 @@ st.write("---")
 # HIGH-LEVEL EXECUTIVE KPI METRICS
 col_m1, col_m2, col_m3 = st.columns(3)
 with col_m1:
-    st.metric(label=text[lang]["m1"], value="KSh 2.89B", delta="PASS — 266 Records Verified")
+    st.metric(label=text[lang]["m1"], value="KSh 2.89B", delta="Verified Analytics Active")
 with col_m2:
-    st.metric(label=text[lang]["m2"], value="KSh 1.68B", delta="PASS — Source Verified")
+    st.metric(label=text[lang]["m2"], value="KSh 1.68B", delta="Source Target Confirmed")
 with col_m3:
     st.metric(label="Stock Tracing Risk" if lang == "English" else "Riski ya Ufuatiliaji", value="89.87%", delta="Data Traceability Gap", delta_color="inverse")
 st.write("---")
@@ -135,84 +135,69 @@ if page == "📈 Executive Overview & Pipeline":
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN AI REPORT GENERATOR
+# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
 # ==========================================
-elif page == "🧠 Real-Time AI Management Brain":
+elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
     st.write(text[lang]["ai_prompt"])
     
     if st.button(text[lang]["ai_btn"]):
-        with st.spinner("Streaming executive intelligence from AI core..."):
-            try:
-                client = Groq()
-                region_summary = df_region.to_string(index=False)
-                
-                prompt_instructions = f"""
-                Perform an executive-level audit business analysis on this corporate dataset for MIKA sales managers.
-                Dataset Parameters:
-                - Transaction Analysis Total (Phase 16): KSh 2,888,966,390.88 across 266 data rows.
-                - Official 2026 Source Total (Phase 18): KSh 1,684,717,184.70.
-                - Traceability Risk: 89.87% (KSh 2.60B) of transaction entries lack stockist tracking metrics.
-                - Regional Log: {region_summary}
-                
-                Your output must be written completely in {lang}. Use strong, executive formatting.
-                Format your presentation into three distinct bold markdown headers:
-                1. MANAGEMENT THE WHYS (Operational logic for scope separation and Nairobi market concentration).
-                2. WHAT-IF RISK MITIGATION (Financial liquidity lift in KSh if stockist tracing maps Nairobi's pool).
-                3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
-                """
-                
-                completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": prompt_instructions}]
-                )
-                
-                st.success("Analysis Successfully Compiled!")
-                st.write("---")
-                # MAREKEBISHO YA USHINDI: Tumeweka [0] hapa kuzuia 'list' object error
-                st.markdown(completion.choices[0].message.content)
-                
-            except Exception as e:
-                st.error(f"AI Server Connection Error: {e}")
-    else:
-        st.info(text[lang]["ai_idle"])
-
-
-# ==========================================
-# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT
-# ==========================================
-else:
-    st.subheader(text[lang]["chat_header"])
-    st.write(text[lang]["chat_desc"])
-    
-    user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
-    
-    if user_query:
-        with st.spinner("MIKA Core Engine is scanning market variables..."):
-            try:
-                client = Groq()
-                
-                context_prompt = (
-                    f"You are the MIKA Limitless Corporate Chatbot Core. "
-                    f"Electronics market assistant in Kenya. "
-                    f"Internal Figures: P16 Transaction Total KSh 2.89 Billion (Nairobi dominates at 49.46%%), "
-                    f"P18 Official Source Total KSh 1.68 Billion (NEVER combine scopes). "
-                    f"Exposure: 89.87%% of data lacks stockist info. "
-                    f"Competitors in Kenya: MIKA (Our brand), Samsung (Premium pricing, high visual ads), "
-                    f"LG Electronics (High brand equity), Ramtons (Aggressive pricing in Naivas/Quickmart), "
-                    f"Hisense (Cooling tier), Alyassin (Rural footprints). "
-                    f"User query: {user_query}. Respond fully and professionally in language: {lang}."
-                )
-                
-                completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
-                st.write("---")
-                # MAREKEBISHO YA USHINDI: Tumeweka [0] na hapa pia kuzuia 'list' object error
-                st.markdown(completion.choices[0].message.content)
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")
+        # SIMULATING THE n8n STEP-BY-STEP WORKFLOW STEPS VISUALLY
+        status_box = st.empty()
+        status_box.info("🔗 [n8n Node 1/4] Triggered: Fetching new raw sales data sheet from system logs...")
+        import time
+        time.sleep(1)
+        
+        status_box.info("⚙️ [n8n Node 2/4] Processing: Python engine executing calculations and regional groupings...")
+        time.sleep(1)
+        
+        status_box.info("🧠 [n8n Node 3/4] Groq Core Ingestion: Sending clean parameters to LLM for world-wide business parsing...")
+        
+        try:
+            client = Groq()
+            region_summary = df_region.to_string(index=False)
+            
+            prompt_instructions = f"""
+            Perform an executive-level audit business analysis on this corporate dataset for MIKA sales managers.
+            Dataset Parameters:
+            - Transaction Analysis Total: KSh 2,888,966,390.88 across 266 data rows.
+            - Official Target Total: KSh 1,684,717,184.70.
+            - Traceability Risk: 89.87% (KSh 2.60B) of entries lack stockist tracking metrics.
+            - Regional Log: {region_summary}
+            
+            Do NOT mention 'Phase 16' or 'Phase 18' in your text! Keep it professional for corporate board.
+            Your output must be written completely in {lang}. Use strong, executive formatting.
+            Format your presentation into three distinct bold markdown headers:
+            1. MANAGEMENT THE WHYS (Operational logic for Nairobi market concentration).
+            2. WHAT-IF RISK MITIGATION (Financial liquidity lift in KSh if stockist tracing maps Nairobi's pool).
+            3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
+            """
+            
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt_instructions}]
+            )
+            
+            status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
+            st.write("---")
+            
+            # THE EXECUTIVE READY REPORT (CLEANED)
+            ai_report = completion.choices[0].message.content
+            st.markdown(ai_report)
+            
+            # CLEAN EXECUTIVE NOTIFICATION TEXT AREA FOR RECRUITERS / MANAGEMENT
+            st.write("---")
+            st.subheader("📱 Automated Management Broadcast Alert Payload")
+            
+            board_alert = (
+                "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
+                "Dear Directors,\n"
+                f"The weekly sales data audit has been compiled successfully via automation.\n\n"
+                "💰 *Key Portfolio Performance:*\n"
+                "- Total Verified Revenue: KSh 2.89 Billion.\n"
+                "- Nairobi Hub Market Share: 49.46% (Dominant Sub-Region).\n\n"
+                "⚠️ *Critical Data Tracking Alert:*\n"
+                "- 89.87% (KSh 2.60B) of transaction lines currently lack identified stockist data. This requires immediate automation logic mitigation to secure tracing controls.\n\n"
+                "🌐 Deployed Control Center: https://streamlit.app"
+            )
+            

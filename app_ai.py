@@ -13,7 +13,7 @@ st.markdown("""
     /* Ficha muundo wa kawaida wa kurasa za Streamlit */
     [data-testid="stSidebarNav"] {display: none;}
     
-    /* Mtindo wa Upau wa Pembeni wa Google (Google Sidebar Styling) */
+    /* Mtindo wa Upau Vaux Pembeni wa Google (Google Sidebar Styling) */
     .google-brand {
         font-size: 24px;
         font-weight: 500;
@@ -123,16 +123,14 @@ text_dict = {
 }
 
 # =====================================================================
-# 3. REAL GOOGLE SIDEBAR INTEGRATION (Ukurasa Unabadilika Bila Vitufe Vya Ajabu)
+# 3. REAL GOOGLE SIDEBAR INTEGRATION
 # =====================================================================
 with st.sidebar:
-    # Nembo Kuu ya Google Brand Replacement kama ulivyoomba
     st.markdown('<div class="google-brand">G &nbsp; mika chat bot</div>', unsafe_allow_html=True)
     
     lang = st.radio("Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
-    # Mistari ya Amri ya Google (Google Actions Simulation)
     st.markdown('<div class="google-menu-item">📝 Mazungumzo mapya</div>', unsafe_allow_html=True)
     st.markdown('<div class="google-menu-item">🔍 Tafuta mazungumzo</div>', unsafe_allow_html=True)
     
@@ -142,7 +140,6 @@ with st.sidebar:
     
     st.write("---")
     
-    # Sehemu ya kubadilisha kurasa tatu kuu (Sasa imepangwa vizuri kama orodha)
     st.markdown('<div class="google-section-title">Chagua Ukurasa / Views</div>', unsafe_allow_html=True)
     page = st.selectbox(
         "Chagua Mtazamo:",
@@ -152,7 +149,6 @@ with st.sidebar:
     
     st.write("---")
     
-    # ⏳ SEHEMU YA "YA HIVI MAJUZI" (Google Recent History Log Engine)
     st.markdown(f'<div class="google-section-title">{text_dict[lang]["chat_title"]}</div>', unsafe_allow_html=True)
     
     if not st.session_state["search_logs"]:
@@ -163,7 +159,6 @@ with st.sidebar:
             
     st.write("---")
     
-    # ⚙️ Mipangilio yenye Menyu ya kufuta kumbukumbu (Options and Three-Dots actions menu style)
     st.markdown('<div class="google-section-title">⚙️ Mipangilio / Settings</div>', unsafe_allow_html=True)
     clear_action = st.checkbox("🗑️ Clear History & Logs")
     if clear_action:
@@ -180,14 +175,11 @@ st.caption(text_dict[lang]["desc"])
 st.warning(text_dict[lang]["risk_banner"])
 st.write("---")
 
-# --- VIEW 1: EXECUTIVE OVERVIEW (Sasa Zimeshuka Chini kwa Upana Kamili Ili Isivurugike) ---
+# --- VIEW 1: EXECUTIVE OVERVIEW ---
 if page == "📈 Executive Overview & Pipeline":
     st.header("🌍 Regional Market Share & Contribution")
-    
-    # Jedwali linapewa upana kamili
     st.dataframe(df_region, use_container_width=True, hide_index=True)
     
-    # Grafu ya Plotly chini ya jedwali kwa upana kamili ili zisijibane
     fig_region = px.bar(
         df_region, 
         x="Region Name", 
@@ -199,13 +191,9 @@ if page == "📈 Executive Overview & Pipeline":
     st.plotly_chart(fig_region, use_container_width=True)
     
     st.write("---")
-    
     st.header("💳 Credit Terms & Liquidity Exposure Pipeline")
-    
-    # Jedwali la pili la malipo kwa upana kamili
     st.dataframe(df_payment, use_container_width=True, hide_index=True)
     
-    # Grafu ya Pie ya pili kwa upana kamili chini ya jedwali
     fig_payment = px.pie(
         df_payment, 
         values="Value Exc. VAT", 
@@ -215,14 +203,13 @@ if page == "📈 Executive Overview & Pipeline":
     )
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: N8N CORE AUTOMATION WORKFLOWS ---
+# --- VIEW 2: N8N CORE AUTOMATION ---
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader("🧠 Simulated n8n Webhook Node Engine Integration")
     st.write("Press the core activation node pipeline to parse database transactional strings.")
     
     if st.button("🚀 Trigger Local n8n Orchestration Pipeline", type="primary"):
         st.success("✅ [Status 200 OK] Live Pipeline Webhook Response Stream Complete!")
-        
         with st.expander("📂 View Simulated Node Processing Payload Logs", expanded=True):
             st.code("""
 [15:00:21] - Initializing payload extraction from raw CSV strings...
@@ -238,23 +225,19 @@ elif page == "🧠 Simulated n8n Orchestration Core":
 elif page == "💬 Ask MIKA Market Chatbot":
     st.subheader("💬 Ask MIKA — Limitless Market Intelligence Chatbot")
     
-    # Onyesha mazungumzo yaliyohifadhiwa sequentially bila kurefresha kimakosa
     for chat in st.session_state["chat_history"]:
         if chat["role"] == "user":
             st.markdown(f'<div class="chat-user-row"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="chat-mika-row"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
             
-    # Box la kisasa la kuchat chini kabisa
     query_box = st.chat_input("Ask any business or competitor query here...")
     if query_box:
-        # Hifadhi swali kwenye "Ya hivi majuzi" upande wa kushoto
         if query_box not in st.session_state["search_logs"]:
             st.session_state["search_logs"].insert(0, query_box[:28] + "...")
             
         st.session_state["chat_history"].append({"role": "user", "text": query_box})
         
-        # Jibu moja la AI lililonyooka
         bot_response = f"Analyzing raw logs for your query: '{query_box}'. Our baseline records confirm Nairobi Region handles 49.46% of transaction footprints."
         st.session_state["chat_history"].append({"role": "mika", "text": bot_response})
         st.rerun()

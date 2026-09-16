@@ -268,7 +268,7 @@ if page == "Executive Overview":
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION OPERATION (CLEAN & NO COMPLEX TRY/EXCEPT) ---
+# --- VIEW 2: REAL N8N AUTOMATION OPERATION ---
 if page == "n8n Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])
@@ -291,6 +291,3 @@ if page == "n8n Core":
 # --- VIEW 3: DEEP AI ENTERPRISE ROUTER ENGINE ---
 if page == "Ask MIKA":
     st.subheader(text_dict[lang]["chat_header"])
-    st.write(text_dict[lang]["chat_desc"])
-    
-    for chat in st.session_state["chat_history"]:

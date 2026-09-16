@@ -4,53 +4,77 @@ import plotly.express as px
 import io
 
 # =====================================================================
-# 1. CORE SYSTEM SETUP & PREMIUM GOOGLE STYLE CSS
+# 1. CORE ENTERPRISE INITIALIZATION & GOOGLE SIDEBAR CSS STYLING
 # =====================================================================
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
 st.markdown("""
     <style>
-    /* Kuficha navigation ya kawaida ya Streamlit ili kutumia yetu safi */
+    /* Ficha muundo wa kawaida wa kurasa za Streamlit */
     [data-testid="stSidebarNav"] {display: none;}
     
-    /* Muundo wa Kisasa wa Upau wa Pembeni (Google Sidebar Look) */
-    .sidebar-brand {
+    /* Mtindo wa Upau wa Pembeni wa Google (Google Sidebar Styling) */
+    .google-brand {
         font-size: 24px;
-        font-weight: bold;
-        color: #1a73e8;
-        margin-bottom: 20px;
-        font-family: 'Google Sans', sans-serif;
-    }
-    .sidebar-section-title {
-        font-size: 14px;
-        color: #70757a;
-        margin-top: 20px;
-        margin-bottom: 8px;
         font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .history-item {
-        font-size: 14px;
-        color: #3c4043;
-        padding: 6px 8px;
-        border-radius: 4px;
-        background-color: #f8f9fa;
-        margin-bottom: 4px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        color: #1a73e8;
+        font-family: 'Google Sans', 'Segoe UI', Arial, sans-serif;
+        margin-bottom: 25px;
+        padding-left: 8px;
     }
     
-    /* Mapovu ya Mazungumzo ya Ask MIKA */
-    .user-bubble { background-color: #e2f0d9; padding: 14px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; font-family: sans-serif; }
-    .mika-bubble { background-color: #f1f1f1; padding: 14px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; font-family: sans-serif; }
+    /* Mistari ya amri yenye ikoni ndogo (Google Menu Item Style) */
+    .google-menu-item {
+        font-size: 15px;
+        color: #3c4043;
+        font-family: sans-serif;
+        padding: 10px 8px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    .google-menu-item:hover {
+        background-color: #f1f3f4;
+    }
+    
+    .google-section-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: #70757a;
+        margin-top: 25px;
+        margin-bottom: 12px;
+        padding-left: 8px;
+    }
+    
+    /* Orodha ya vitu vilivyotafutwa hivi karibuni */
+    .google-history-item {
+        font-size: 14px;
+        color: #3c4043;
+        padding: 8px 8px;
+        margin-bottom: 2px;
+        border-radius: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .google-history-item:hover {
+        background-color: #f1f3f4;
+        cursor: pointer;
+    }
+    
+    /* Mapovu mapya ya Chat ya Ask MIKA */
+    .chat-user-row { background-color: #e2f0d9; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; }
+    .chat-mika-row { background-color: #f1f1f1; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #1a73e8; color: #222222; }
     </style>
 """, unsafe_allow_html=True)
 
 # =====================================================================
-# 2. CORP DATA MATRIX POOLS
+# 2. BUSINESS DATA REPOSITORIES
 # =====================================================================
 region_csv = """Region Name,Total_Sales,Outlet_Count,Pct_of_Total
 NAIROBI REGION,1429021702.88,162,49.46
@@ -71,100 +95,127 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
-# Initialize Dynamic Chat Memory Arrays securely
+# Initialize session arrays safely
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
 if "search_logs" not in st.session_state:
-    st.session_state["search_logs"] = ["top leading brands", "Nairobi region sales Q4"]
+    st.session_state["search_logs"] = [
+        "i want to start a new project as i l...",
+        "what's up i'm not getting any fee...",
+        "how to use postman tool on my l...",
+        "can you outline the differences b..."
+    ]
 
-# Dictionary ya Lugha zote mbili
-text = {
+# Multi-lingual Dictionary configuration 
+text_dict = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
         "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
-        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data.",
-        "chart1_title": "🌍 Regional Market Share Distribution (Plotly Visual)",
-        "chart2_title": "💳 Liquidity Exposure & Credit Terms Pipeline"
+        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data. This is a tracking concern, not an immediate financial loss.",
+        "chat_title": "Ya hivi majuzi"
     },
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
         "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
         "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum.",
-        "chart1_title": "🌍 Uchangiaji wa Mauzo Kimkoa (Grafu ya Plotly)",
-        "chart2_title": "💳 Masharti ya Malipo na Hali ya ukwasi wa Mtaji"
+        "chat_title": "Ya hivi majuzi"
     }
 }
 
 # =====================================================================
-# 3. CLEAN CUSTOM GOOGLE SIDEBAR INTEGRATION
+# 3. REAL GOOGLE SIDEBAR INTEGRATION (Ukurasa Unabadilika Bila Vitufe Vya Ajabu)
 # =====================================================================
 with st.sidebar:
-    st.markdown('<div class="sidebar-brand">🤖 mika chat bot</div>', unsafe_allow_html=True)
+    # Nembo Kuu ya Google Brand Replacement kama ulivyoomba
+    st.markdown('<div class="google-brand">G &nbsp; mika chat bot</div>', unsafe_allow_html=True)
     
-    lang = st.radio("⚡ Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
+    lang = st.radio("Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
-    page = st.radio(
-        "Select Dashboard View:" if lang == "English" else "Chagua Mtazamo:",
-        ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
+    # Mistari ya Amri ya Google (Google Actions Simulation)
+    st.markdown('<div class="google-menu-item">📝 Mazungumzo mapya</div>', unsafe_allow_html=True)
+    st.markdown('<div class="google-menu-item">🔍 Tafuta mazungumzo</div>', unsafe_allow_html=True)
+    
+    st.markdown('<div class="google-section-title">Kompyuta ndogo</div>', unsafe_allow_html=True)
+    st.markdown('<div class="google-menu-item">➕ Weka daftari</div>', unsafe_allow_html=True)
+    st.markdown('<div class="google-menu-item">📁 poe business project</div>', unsafe_allow_html=True)
+    
+    st.write("---")
+    
+    # Sehemu ya kubadilisha kurasa tatu kuu (Sasa imepangwa vizuri kama orodha)
+    st.markdown('<div class="google-section-title">Chagua Ukurasa / Views</div>', unsafe_allow_html=True)
+    page = st.selectbox(
+        "Chagua Mtazamo:",
+        ["📈 Executive Overview & Pipeline", "🧠 Simulated n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"],
+        label_visibility="collapsed"
     )
+    
     st.write("---")
     
-    # ☰ Orodha ya Vitu Vilivyotafutwa (Search Logs List Icon view)
-    st.markdown('<div class="sidebar-section-title">☰ Orodha ya Utafutaji / Search Logs</div>', unsafe_allow_html=True)
+    # ⏳ SEHEMU YA "YA HIVI MAJUZI" (Google Recent History Log Engine)
+    st.markdown(f'<div class="google-section-title">{text_dict[lang]["chat_title"]}</div>', unsafe_allow_html=True)
     
     if not st.session_state["search_logs"]:
-        st.caption("No logs recorded." if lang == "English" else "Hakuna rekodi zilizopatikana.")
+        st.caption("Hakuna rekodi.")
     else:
         for idx, log in enumerate(st.session_state["search_logs"]):
-            st.markdown(f'<div class="history-item">🔍 {log}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="google-history-item">💬 {log}</div>', unsafe_allow_html=True)
             
     st.write("---")
     
-    # 📌 Safisha Kumbukumbu kwa kutumia mtindo mdogo wa vitone vitatu (Three-Dots options menu simulation)
-    options_menu = st.selectbox("⚙️ Options / Chaguzi:", ["-- Action Menu --", "🗑️ Delete / Clear History"])
-    if options_menu == "🗑️ Delete / Clear History":
+    # ⚙️ Mipangilio yenye Menyu ya kufuta kumbukumbu (Options and Three-Dots actions menu style)
+    st.markdown('<div class="google-section-title">⚙️ Mipangilio / Settings</div>', unsafe_allow_html=True)
+    clear_action = st.checkbox("🗑️ Clear History & Logs")
+    if clear_action:
         st.session_state["chat_history"] = []
         st.session_state["search_logs"] = []
-        st.toast("Kumbukumbu zote zimefutwa kwa mafanikio!")
+        st.toast("Kumbukumbu zote zimefutwa!")
         st.rerun()
 
 # =====================================================================
-# 4. PRIMARY DISPLAY PANEL CONTROLLER
+# 4. PRIMARY MAIN PANEL CONTROLLER
 # =====================================================================
-st.title(text[lang]["title"])
-st.caption(text[lang]["desc"])
-st.warning(text[lang]["risk_banner"])
+st.title(text_dict[lang]["title"])
+st.caption(text_dict[lang]["desc"])
+st.warning(text_dict[lang]["risk_banner"])
 st.write("---")
 
-# --- VIEW 1: FIXED EXECUTIVE DASHBOARD WITH LIVE PLOTLY GRAPHS ---
+# --- VIEW 1: EXECUTIVE OVERVIEW (Sasa Zimeshuka Chini kwa Upana Kamili Ili Isivurugike) ---
 if page == "📈 Executive Overview & Pipeline":
-    col1, col2 = st.columns(2)
+    st.header("🌍 Regional Market Share & Contribution")
     
-    with col1:
-        st.subheader("📋 Regional Raw Metrics")
-        st.dataframe(df_region, use_container_width=True, hide_index=True)
-        
-    with col2:
-        st.subheader(text[lang]["chart1_title"])
-        # Kuchora Grafu ya kwanza ya Bar Chart kwa kutumia Plotly Express (Marekebisho makubwa ya Grafu)
-        fig_region = px.bar(df_region, x="Region Name", y="Total_Sales", color="Region Name", text_auto='.2s', title="Sales Volume per Territory")
-        st.plotly_chart(fig_region, use_container_width=True)
-        
+    # Jedwali linapewa upana kamili
+    st.dataframe(df_region, use_container_width=True, hide_index=True)
+    
+    # Grafu ya Plotly chini ya jedwali kwa upana kamili ili zisijibane
+    fig_region = px.bar(
+        df_region, 
+        x="Region Name", 
+        y="Total_Sales", 
+        color="Region Name", 
+        title="Visual representation of Sales Volume per Territory",
+        template="plotly_white"
+    )
+    st.plotly_chart(fig_region, use_container_width=True)
+    
     st.write("---")
     
-    col3, col4 = st.columns(2)
-    with col3:
-        st.subheader("📋 Credit Pipeline Matrix")
-        st.dataframe(df_payment, use_container_width=True, hide_index=True)
-        
-    with col4:
-        st.subheader(text[lang]["chart2_title"])
-        # Kuchora Grafu ya pili ya Pie Chart kwa ajili ya kuonyesha asilimia za malipo
-        fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations")
-        st.plotly_chart(fig_payment, use_container_width=True)
+    st.header("💳 Credit Terms & Liquidity Exposure Pipeline")
+    
+    # Jedwali la pili la malipo kwa upana kamili
+    st.dataframe(df_payment, use_container_width=True, hide_index=True)
+    
+    # Grafu ya Pie ya pili kwa upana kamili chini ya jedwali
+    fig_payment = px.pie(
+        df_payment, 
+        values="Value Exc. VAT", 
+        names="Payment Terms", 
+        hole=0.4, 
+        title="Credit Term Allocations Share Breakdown"
+    )
+    st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: FIXED N8N SIMULATED CORE WITH ENGAGING DETAILED RESPONSE ---
+# --- VIEW 2: N8N CORE AUTOMATION WORKFLOWS ---
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader("🧠 Simulated n8n Webhook Node Engine Integration")
     st.write("Press the core activation node pipeline to parse database transactional strings.")
@@ -172,7 +223,6 @@ elif page == "🧠 Simulated n8n Orchestration Core":
     if st.button("🚀 Trigger Local n8n Orchestration Pipeline", type="primary"):
         st.success("✅ [Status 200 OK] Live Pipeline Webhook Response Stream Complete!")
         
-        # Matrix terminal output representation explaining data flows
         with st.expander("📂 View Simulated Node Processing Payload Logs", expanded=True):
             st.code("""
 [15:00:21] - Initializing payload extraction from raw CSV strings...
@@ -184,29 +234,12 @@ elif page == "🧠 Simulated n8n Orchestration Core":
     else:
         st.info("💡 Standby Mode: Local simulator execution channel waiting for trigger action input.")
 
-# --- VIEW 3: FIXED ASK MIKA CHATBOT WITH NO-DUPLICATING CHAT ENGINE ---
+# --- VIEW 3: ASK MIKA CHATBOT ENGINE ---
 elif page == "💬 Ask MIKA Market Chatbot":
     st.subheader("💬 Ask MIKA — Limitless Market Intelligence Chatbot")
     
-    # Render historical chat logs from memory sequentially inside uniform visual bubbles
+    # Onyesha mazungumzo yaliyohifadhiwa sequentially bila kurudia rrefresh errors
     for chat in st.session_state["chat_history"]:
         if chat["role"] == "user":
-            st.markdown(f'<div class="user-bubble"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="chat-user-row"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
-            
-    # Tumesakinisha st.chat_input ya kisasa ili kuzuia kujirudia kwa maandishi au makosa ya kurefresha
-    query_box = st.chat_input("Ask any business or competitor query here...")
-    
-    if query_box:
-        # Save query directly into dynamic sidebar search lists
-        if query_box not in st.session_state["search_logs"]:
-            st.session_state["search_logs"].insert(0, query_box)
-            
-        # Append parameters to chat histories seamlessly
-        st.session_state["chat_history"].append({"role": "user", "text": query_box})
-        
-        # Create clear single system automated intelligence answer string
-        bot_response = f"Analyzing raw logs for your query: '{query_box}'. Our baseline records confirm Nairobi Region handles 49.46% of transaction footprints."
-        st.session_state["chat_history"].append({"role": "mika", "text": bot_response})
-        st.rerun()

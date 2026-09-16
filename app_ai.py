@@ -24,8 +24,8 @@ st.markdown("""
     }
     
     /* Speech bubble styles for history panel */
-    .user-bubble { background-color: #e2f0d9; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; }
-    .mika-bubble { background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; }
+    .user-bubble { background-color: #e2f0d9; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; font-family: sans-serif; }
+    .mika-bubble { background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #28a745; color: #222222; font-family: sans-serif; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -78,7 +78,7 @@ text = {
         "ai_idle": "💡 Local n8n Simulator Core: Idle. Pipeline waiting for execution command.",
         "chat_header": "💬 Ask MIKA — Limitless Market Intelligence Chatbot",
         "chat_desc": "Ask any business, competitor (Samsung, LG, Ramtons, Hisense, Alyassin), supply chain, stockout, or market query related to Kenya.",
-        "chat_ph": "Type your query here or choose a top search below..."
+        "chat_ph": "Type your query here and press enter..."
     },
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
@@ -94,7 +94,7 @@ text = {
         "ai_idle": "💡 Seva ya n8n Simulator iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
         "chat_header": "💬 Uliza MIKA — Chatbot Huru ya Akili ya Soko",
         "chat_desc": "Uliza swali lolote la kibiashara, washindani (Samsung, LG, Ramtons, Hisense), stoo kupungua, au mwenendo wa soko la Kenya.",
-        "chat_ph": "Andika swali lako hapa au chagua maswali maarufu chini..."
+        "chat_ph": "Andika swali lako hapa kisha ubonyeze enter..."
     }
 }
 
@@ -189,8 +189,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            # SAHIHI: Imeongezewa [0] hapa kuzuia 'list' object error
-            ai_report = completion.choices[0].message.content
+            ai_report = completion.choices.message.content
             st.markdown(ai_report)
             
             st.write("---")
@@ -204,91 +203,3 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 "- Total Verified Revenue: KSh 2.89 Billion.\n"
                 "- Nairobi Hub Market Share: 49.46%.\n\n"
                 "⚠️ *Critical Data Tracking Alert:*\n"
-                "- 89.87% lack identified stockist data. Requires immediate automation controls.\n\n"
-                "🌐 Deployed Control Center: https://streamlit.app"
-            )
-            
-            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
-            
-        except Exception as e:
-            st.error(f"AI Server Connection Error: {e}")
-    else:
-        st.info(text[lang]["ai_idle"])
-
-
-# ==========================================
-# PAGE VIEW 3: DYNAMIC ASK MIKA MARKET CHATBOT (CLEAN UI & PERSISTENT MEMORY)
-# ==========================================
-else:
-    st.subheader(text[lang]["chat_header"])
-    st.write(text[lang]["chat_desc"])
-    
-    # Initialize Memory Variables safely inside Session State
-    if "chat_history" not in st.session_state:
-        st.session_state["chat_history"] = []
-    if "input_value" not in st.session_state:
-        st.session_state["input_value"] = ""
-
-    # 🎛️ TOP CONTROL BAR: CLEAR DATA ICON & HIDDEN POP-UP HISTORY LOGS
-    c_ctrl1, c_ctrl2 = st.columns(2)
-    with c_ctrl1:
-        if st.button("🗑️ Clear" if lang == "English" else "🗑️ Futa"):
-            st.session_state["chat_history"] = []
-            st.session_state["input_value"] = ""
-            st.rerun()
-            
-    with c_ctrl2:
-        with st.popover("⏳ History Logs" if lang == "English" else "⏳ Kumbukumbu ya Siri"):
-            if not st.session_state["chat_history"]:
-                st.write("No previous chat history found." if lang == "English" else "Hakuna kumbukumbu za nyuma.")
-            for chat in st.session_state["chat_history"]:
-                if chat["role"] == "user":
-                    st.markdown(f'👤 **You:** {chat["text"]}')
-                else:
-                    st.markdown(f'🤖 **MIKA:** {chat["text"]}')
-                    st.write("---")
-
-    st.write("---")
-    
-    # 📌 INDEPENDENT TOP SEARCHES GRIDS SECTION
-    st.write("💡 **Top Searches / Maswali Haraka:**" if lang == "English" else "💡 **Maswali Maarufu ya Wakurugenzi:**")
-    c_ts1, c_ts2 = st.columns(2)
-    
-    with c_ts1:
-        if st.button("🌍 Nairobi Market Share & Performance Report"):
-            st.session_state["input_value"] = "Analyze the Nairobi region performance and its 49.46% market share concentration."
-            st.rerun()
-            
-    with c_ts2:
-        if st.button("🥊 Samsung vs Ramtons Competitor Strategy Analysis"):
-            st.session_state["input_value"] = "What are Samsung and Ramtons doing well in Kenya electronics market compared to MIKA?"
-            st.rerun()
-
-    st.write("---")
-
-    # Dynamic Value injector engine
-    user_query = st.text_input(text[lang]["chat_ph"], value=st.session_state["input_value"], key="global_market_chatbot")
-    
-    if user_query:
-        st.session_state["input_value"] = ""
-        with st.spinner("MIKA Core Engine is scanning market variables..."):
-            try:
-                client = Groq()
-                
-                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors in Kenya electronics market: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_query}. Respond fully and professionally in language: {lang}."
-                
-                completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                # SAHIHI: Imeongezewa [0] hapa pia kuzuia 'list' object error
-                ai_response = completion.choices[0].message.content
-                
-                # Commit conversation logs securely to array stacks
-                st.session_state["chat_history"].append({"role": "user", "text": user_query})
-                st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
-                st.rerun()
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")

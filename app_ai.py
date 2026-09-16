@@ -231,7 +231,7 @@ elif page == "💬 Ask MIKA Market Chatbot":
         else:
             st.markdown(f'<div class="chat-mika-row"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
             
-        query_box = st.chat_input("Ask any business or competitor query here...")
+    query_box = st.chat_input("Ask any business or competitor query here...")
     if query_box:
         if query_box not in st.session_state["search_logs"]:
             st.session_state["search_logs"].insert(0, query_box[:28] + "...")
@@ -241,16 +241,3 @@ elif page == "💬 Ask MIKA Market Chatbot":
         bot_response = f"Analyzing raw logs for your query: '{query_box}'. Our baseline records confirm Nairobi Region handles 49.46% of transaction footprints."
         st.session_state["chat_history"].append({"role": "mika", "text": bot_response})
         st.rerun()
-        
-        query_box = st.chat_input("Ask any business or competitor query here...")
-    if query_box:
-        if query_box not in st.session_state["search_logs"]:
-            st.session_state["search_logs"].insert(0, query_box[:28] + "...")
-            
-        st.session_state["chat_history"].append({"role": "user", "text": query_box})
-        
-        bot_response = f"Analyzing raw logs for your query: '{query_box}'. Our baseline records confirm Nairobi Region handles 49.46% of transaction footprints."
-        st.session_state["chat_history"].append({"role": "mika", "text": bot_response})
-        st.rerun()
-
-

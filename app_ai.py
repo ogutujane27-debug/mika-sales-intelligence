@@ -268,7 +268,7 @@ if page == "📈 Executive Overview & Pipeline":
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION ENGINE LINKED TO REAL IP ---
+# --- VIEW 2: REAL N8N AUTOMATION OPERATION ---
 if page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])
@@ -278,10 +278,7 @@ if page == "🧠 Simulated n8n Orchestration Core":
     if st.button(text_dict[lang]["ai_btn"], type="primary"):
         st.info(f"Firing outbound transactional payload parameters to n8n line at: {n8n_url}...")
         
-        response_code = 0
-        response_text = ""
-        is_error = False
-        
+        # Sasa hivi tumetoa ile block tata ya try/except ya ndani iliyokuwa inaleta Syntax Errors
         try:
             payload = {
                 "source": "streamlit_command_center",
@@ -289,4 +286,6 @@ if page == "🧠 Simulated n8n Orchestration Core":
                 "payment_matrix": payment_csv
             }
             response = requests.post(n8n_url, json=payload, timeout=8)
-            response_code = response.status_code
+            st.success("✅ n8n Pipeline completed execution step successfully!")
+            st.write(response.text)
+        except Exception as e:

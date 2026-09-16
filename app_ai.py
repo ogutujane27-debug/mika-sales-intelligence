@@ -162,9 +162,9 @@ elif page == "🧠 Real-Time AI Management Brain":
                 3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
                 """
                 
-                # SULUHISHO: Tumewka mfano sahihi wa llama-3.3-70b-versatile hapa
+                # REPLACED: Mfumo thabiti na rasmi wa modeli mpya ya Groq ya mwaka 2026
                 completion = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": prompt_instructions}]
                 )
                 
@@ -204,9 +204,9 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}."
                 )
                 
-                # SULUHISHO: Tumewka mfano sahihi wa llama-3.3-70b-versatile hapa kwa ajili ya Chatbot live
+                # REPLACED: Mfumo thabiti na rasmi wa modeli mpya ya Groq ya mwaka 2026 kwa ajili ya Chatbot live
                 completion = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 

@@ -170,7 +170,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
         import time
         time.sleep(1)
         
-                status_box.info("⚙️ [n8n Node 2/4] Processing: Python engine executing calculations and regional groupings...")
+        status_box.info("⚙️ [n8n Node 2/4] Processing: Python engine executing calculations and regional groupings...")
         time.sleep(1)
         
         status_box.info("🧠 [n8n Node 3/4] Groq Core Ingestion: Sending clean parameters to LLM for world-wide business parsing...")
@@ -189,7 +189,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            ai_report = completion.choices[0].message.content
+            ai_report = completion.choices.message.content
             st.markdown(ai_report)
             
             st.write("---")
@@ -281,9 +281,8 @@ else:
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 
-                ai_response = completion.choices[0].message.content
+                ai_response = completion.choices.message.content
                 
-                # Commit conversation logs securely to array stacks
                 st.session_state["chat_history"].append({"role": "user", "text": user_query})
                 st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
                 st.rerun()

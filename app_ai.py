@@ -162,8 +162,9 @@ elif page == "🧠 Real-Time AI Management Brain":
                 3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
                 """
                 
+                # REPLACED: Muundo thabiti wa modeli mpya ya Groq
                 completion = client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
+                    model="llama-3.3-70b-specdec",
                     messages=[{"role": "user", "content": prompt_instructions}]
                 )
                 
@@ -203,8 +204,9 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}."
                 )
                 
+                # REPLACED: Muundo thabiti wa modeli mpya ya Groq kwa ajili ya Chatbot live
                 completion = client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
+                    model="llama-3.3-70b-specdec",
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 

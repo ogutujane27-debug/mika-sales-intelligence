@@ -7,7 +7,7 @@ import io
 # 1. ENTERPRISE SUITE INITIALIZATION
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
-# Premium CSS with safe Python percentage parsing for fluid animations
+# Premium CSS for clean animations and layout optimization
 st.markdown("""
     <style>
     @keyframes slideUp { 
@@ -25,6 +25,9 @@ st.markdown("""
         background-color: #007bff !important; color: white !important; font-weight: bold !important;
         box-shadow: 0 4px 15px rgba(0,123,255,0.25); border-radius: 6px !important; width: 100%; height: 45px;
     }
+    /* Style for clear separation of chat speech bubbles */
+    .user-bubble { background-color: #e2f0d9; padding: 10px; border-radius: 10px; margin-bottom: 5px; }
+    .mika-bubble { background-color: #f1f1f1; padding: 10px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #28a745; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -61,7 +64,7 @@ with st.sidebar:
     st.write("---")
     st.caption("MIKA Automation Infrastructure Layer Active.")
 
-# Localized app dictionary strings (CLEANED FROM KIUFUNDI BACKEND LABELS)
+# Localized app dictionary strings
 text = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
@@ -137,7 +140,6 @@ if page == "📈 Executive Overview & Pipeline":
     st.subheader("📁 Verified Master Region Data Register")
     st.dataframe(df_region, use_container_width=True, hide_index=True)
     
-    # 📥 THE BRAND NEW DOWNLOAD ENGINE FOR EXECUTIVE MANAGEMENT BOARD
     st.write("---")
     raw_briefing_text = (
         "MIKA GLOBAL EXECUTIVE EXECUTIVE SUMMARY\n\n"
@@ -161,7 +163,7 @@ if page == "📈 Executive Overview & Pipeline":
 
 
 # ==========================================
-# PAGE VIEW 2: FULL-SCREEN AI REPORT GENERATOR
+# PAGE VIEW 2: FULL-SCREEN SIMULATED n8n ORCHESTRATION PIPELINE
 # ==========================================
 elif page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
@@ -196,53 +198,3 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             st.markdown(ai_report)
             
             st.write("---")
-            st.subheader("📱 Automated Management Broadcast Alert Payload")
-            
-            board_alert = (
-                "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
-                "Dear Directors,\n"
-                "The weekly sales data audit has been compiled successfully via automation.\n\n"
-                "💰 *Key Portfolio Performance:*\n"
-                "- Total Verified Revenue: KSh 2.89 Billion.\n"
-                "- Nairobi Hub Market Share: 49.46% (Dominant Sub-Region).\n\n"
-                "⚠️ *Critical Data Tracking Alert:*\n"
-                "- 89.87% (KSh 2.60B) of transaction lines currently lack identified stockist data. This requires immediate automation logic mitigation to secure tracing controls.\n\n"
-                "🌐 Deployed Control Center: https://streamlit.app"
-            )
-            
-            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
-            
-        except Exception as e:
-            st.error(f"AI Server Connection Error: {e}")
-    else:
-        st.info(text[lang]["ai_idle"])
-
-
-# ==========================================
-# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT
-# ==========================================
-else:
-    st.subheader(text[lang]["chat_header"])
-    st.write(text[lang]["chat_desc"])
-    
-    user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
-    
-    if user_query:
-        with st.spinner("MIKA Core Engine is scanning market variables..."):
-            try:
-                client = Groq()
-                
-                # SAFARI HII TUMEFUTA MABANO YOTE YA KUCHANGANYA NA KUWEKA STR NYEPESI MOJA TU
-                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_query}. Respond fully and professionally in language: {lang}."
-                
-                completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
-                st.write("---")
-                st.markdown(completion.choices[0].message.content)
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")

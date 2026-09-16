@@ -211,12 +211,13 @@ with st.sidebar:
 
     st.write("---")
 
+    # HAPA NDIPO MABADILIKO YAKO HALISI YALIPO: Majina ya kurasa yameandikwa kwa usahihi ili yafanye kazi
     page = st.radio(
         "Chagua Mtazamo:",
         [
-            "📈 Executive Overview & Pipeline",
-            "🧠 Simulated n8n Orchestration Core",
-            "💬 Ask MIKA Market Chatbot"
+            "Executive Overview",
+            "n8n Core",
+            "Ask MIKA"
         ],
         label_visibility="collapsed"
     )
@@ -254,7 +255,7 @@ st.warning(text_dict[lang]["risk_banner"])
 st.write("---")
 
 # --- VIEW 1: EXECUTIVE OVERVIEW ---
-if page == "📈 Executive Overview & Pipeline":
+if page == "Executive Overview":
     st.header(text_dict[lang]["chart1"])
     st.dataframe(df_region, use_container_width=True, hide_index=True)
     
@@ -269,7 +270,7 @@ if page == "📈 Executive Overview & Pipeline":
     st.plotly_chart(fig_payment, use_container_width=True)
 
 # --- VIEW 2: REAL N8N AUTOMATION OPERATION ---
-if page == "🧠 Simulated n8n Orchestration Core":
+if page == "n8n Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])
     
@@ -285,8 +286,3 @@ if page == "🧠 Simulated n8n Orchestration Core":
             }
             response = requests.post(n8n_url, json=payload, timeout=8)
             st.success("✅ n8n Pipeline completed execution step successfully!")
-            st.write(response.text)
-        except Exception as e:
-            st.error("❌ Connection failed or local server network is not active.")
-            with st.expander("📂 View Simulated Node Processing Payload Logs (Fallback Mode)", expanded=True):
-                st.code(f"[15:00:21] - Initializing extraction...\n[15:00:22] - Local net error trace: {str(e)}\n[15:00:25] - Safe mock pipeline loaded.", language="bash")

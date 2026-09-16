@@ -206,4 +206,52 @@ elif page == "🧠 Simulated n8n Orchestration Core":
         try:
             client = Groq()
             region_summary = df_region.to_string(index=False)
+
+# ==========================================
+# PAGE VIEW 3: DYNAMIC ASK MIKA CHATBOT (CLEAN INTERFACE WITH SIDEBAR HISTORY LOGS)
+# ==========================================
+else:
+    st.subheader(text[lang]["chat_header"])
+    st.write(text[lang]["chat_desc"])
+    st.write("---")
+
+    # 🛒 PROPER FORM DESIGN WITH INPUT FIELD AND THE '💬 Send Query' BUTTON
+    with st.form(key="mika_clean_chat_form", clear_on_submit=True):
+        user_input_field = st.text_input(text[lang]["chat_ph"], value="")
+        submit_chat_button = st.form_submit_button(
+            label="💬 Send Query" if lang == "English" else "💬 Tuma Swali"
+        )
+
+    # Core engine triggering on form submission events
+    if submit_chat_button and user_input_field:
+        with st.spinner("MIKA Core Engine is scanning market variables..."):
+            try:
+                client = Groq()
+                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core in Kenya. Transaction Revenue KSh 2.89B, Target Total KSh 1.68B. 89.87%% of data lacks stockist info. Competitors in Kenya electronics market: Samsung, LG, Ramtons, Hisense, Alyassin. User query: {user_input_field}. Respond fully and professionally in language: {lang}."
+                
+                completion = client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": context_prompt}]
+                )
+                
+                ai_response = completion.choices[0].message.content
+                
+                # Append exchanges immediately into session arrays so the Sidebar refreshes on the spot!
+                st.session_state["chat_history"].append({"role": "user", "text": user_input_field})
+                st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"Chatbot Communication Failure: {e}")
+
+    # 🌟 RENDER THE CURRENT ACTIVE EXCHANGES DIRECTLY ON THE MAIN VIEW AREA
+    if st.session_state["chat_history"]:
+        latest_user = st.session_state["chat_history"][-2]["text"]
+        latest_mika = st.session_state["chat_history"][-1]["text"]
+        
+        st.write("---")
+        st.markdown(f'<div class="user-bubble"><b>👤 You:</b> {latest_user}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA RESPONSE:</b></div>', unsafe_allow_html=True)
+        st.markdown(latest_mika)
+
             

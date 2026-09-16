@@ -18,7 +18,7 @@ st.markdown("""
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
+        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 50px;
         font-size: 16px !important;
     }
     </style>
@@ -184,24 +184,20 @@ else:
     st.subheader(text[lang]["chat_header"])
     st.write(text[lang]["chat_desc"])
     
-    user_query = st.st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
+    # MAREKEBISHO YA TYPO: st.text_input sasa imenyooka safi bila kujirudia!
+    user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
     
     if user_query:
         with st.spinner("MIKA Core Engine is scanning market variables..."):
             try:
                 client = Groq()
-                payment_summary = df_payment.to_string(index=False)
                 
-                context_prompt = f"You are the MIKA Limitless Corporate Chatbot Core. You possess complete expertise on the electronics landscape in Kenya, including brands like Samsung, LG, Ramtons, Hisense, and Alyassin. The user asks: '{user_query}'"
+                context_prompt = f"""
+                You are the MIKA Limitless Corporate Chatbot Core. You serve as a world-class electronics market research agent, logistics analyst, and strategy consultant in Kenya.
+                You are speaking directly to executive managers and multinational partners. 
                 
-                completion = client.chat.completions.create(
-                    model="groq/compound",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
+                You have comprehensive access to internal enterprise figures:
+                - Transaction Total (Phase 16): KSh 2.89 Billion (Nairobi dominates at KSh 1.43B, equal to 49.46% of transaction sales).
+                - Official Source Total (Phase 18): KSh 1.68 Billion. (Strict reporting rule: NEVER combine these scopes).
+                - Tracking Exposure: 89.87% (KSh 2.60B) of transaction rows lack stockist data.
                 
-                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
-                st.write("---")
-                st.markdown(completion.choices[0].message.content)
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")

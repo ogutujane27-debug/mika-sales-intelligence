@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import io
 import requests
+from groq import Groq
 
 # =====================================================================
 # 1. CORE ENTERPRISE INITIALIZATION & GOOGLE SIDEBAR CSS STYLING
@@ -246,7 +247,7 @@ with st.sidebar:
 
 
 # =====================================================================
-# 6. PRIMARY MAIN PANEL CONTROLLER (NO ELSE BLOCKS)
+# 6. PRIMARY MAIN PANEL
 # =====================================================================
 st.title(text_dict[lang]["title"])
 st.caption(text_dict[lang]["desc"])
@@ -268,7 +269,7 @@ if page == "📈 Executive Overview & Pipeline":
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION OPERATION ---
+# --- VIEW 2: REAL N8N AUTOMATION ENGINE LINKED TO REAL IP TARGET ---
 if page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])

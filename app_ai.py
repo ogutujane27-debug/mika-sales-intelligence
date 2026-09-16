@@ -211,13 +211,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
     if st.button("🚀 Trigger Local n8n Orchestration Pipeline", type="primary"):
         st.success("✅ [Status 200 OK] Live Pipeline Webhook Response Stream Complete!")
         with st.expander("📂 View Simulated Node Processing Payload Logs", expanded=True):
-            st.code("""
-[15:00:21] - Initializing payload extraction from raw CSV strings...
-[15:00:22] - Successfully loaded 1,562 active transactional rows into node data frames.
-[15:00:23] - Executing data cleanup scripts: Matched 7 geographical sales branches inside Kenya.
-[15:00:24] - Metrics computation completed: Total verified database footprint aggregated to memory.
-[15:00:25] - Pipeline run completed successfully. Outbound channel state: IDLE.
-            """, language="bash")
+            st.code("[15:00:21] - Initializing payload extraction...\n[15:00:22] - Loaded 1,562 rows.\n[15:00:25] - Pipeline run completed successfully.", language="bash")
     else:
         st.info("💡 Standby Mode: Local simulator execution channel waiting for trigger action input.")
 

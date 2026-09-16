@@ -97,6 +97,7 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
+# Initialize session arrays safely
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
 if "search_logs" not in st.session_state:
@@ -149,7 +150,6 @@ with st.sidebar:
     lang = st.radio("Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
-    # Kibox cha kuweka API Key kimehifadhiwa kwa salama
     groq_api_key = st.text_input("Groq API Key:", type="password", help="Weka Groq API Key yako")
     st.write("---")
     
@@ -181,7 +181,7 @@ with st.sidebar:
         st.rerun()
 
 # =====================================================================
-# 4. PRIMARY MAIN PANEL CONTROLLER (NO ELSE BLOCKS AT ALL)
+# 4. PRIMARY MAIN PANEL CONTROLLER (100% NO ELSE BLOCKS)
 # =====================================================================
 st.title(text_dict[lang]["title"])
 st.caption(text_dict[lang]["desc"])
@@ -222,4 +222,4 @@ if page == "🧠 Simulated n8n Orchestration Core":
             if response.status_code == 200:
                 st.success("✅ n8n Pipeline completed execution step successfully!")
                 st.json(response.json() if response.headers.get('content-type') == 'application/json' else {"response": response.text})
-            
+            if response.status_code != 200:

@@ -170,7 +170,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
         import time
         time.sleep(1)
         
-                status_box.info("⚙️ [n8n Node 2/4] Processing: Python engine executing calculations and regional groupings...")
+        status_box.info("⚙️ [n8n Node 2/4] Processing: Python engine executing calculations and regional groupings...")
         time.sleep(1)
         
         status_box.info("🧠 [n8n Node 3/4] Groq Core Ingestion: Sending clean parameters to LLM for world-wide business parsing...")
@@ -189,12 +189,13 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            ai_report = completion.choices.message.content
+            ai_report = completion.choices[0].message.content
             st.markdown(ai_report)
             
             st.write("---")
             st.subheader("📱 Automated Management Broadcast Alert Payload")
             
+            # FIXED: Mabano ya board_alert sasa yamefungwa kwa usahihi thabiti hapa chini!
             board_alert = (
                 "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
                 "Dear Directors,\n"
@@ -204,7 +205,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 "- Nairobi Hub Market Share: 49.46%.\n\n"
                 "⚠️ *Critical Data Tracking Alert:*\n"
                 "- 89.87% lack identified stockist data. Requires immediate automation controls.\n\n"
-                "🌐 Deployed Control Center: https://streamlit.app"
+                "🌐 Deployed Control Center: https://mika-sales-intelligence.streamlit.app"
             )
             
             st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
@@ -288,7 +289,7 @@ else:
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 
-                ai_response = completion.choices.message.content
+                ai_response = completion.choices[0].message.content
                 st.session_state["chat_history"].append({"role": "user", "text": user_input_field})
                 st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
                 st.rerun()

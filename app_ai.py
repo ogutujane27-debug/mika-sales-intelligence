@@ -18,7 +18,7 @@ st.markdown("""
     .stMetric, .element-container { animation: slideUp 0.5s ease-out forwards; }
     .stButton>button { 
         background-color: #28a745 !important; color: white !important; font-weight: bold !important;
-        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 50px;
+        box-shadow: 0 4px 15px rgba(40,167,69,0.25); border-radius: 6px !important; width: 100%; height: 45px;
         font-size: 16px !important;
     }
     </style>
@@ -89,7 +89,7 @@ text = {
         "ai_idle": "💡 Seva ya AI iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
         "chat_header": "💬 Uliza MIKA — Chatbot Huru ya Akili ya Soko",
         "chat_desc": "Uliza swali lolote la kibiashara, washindani (Samsung, LG, Ramtons, Hisense), stoo kupungua, au mwenendo wa soko la Kenya.",
-        "chat_ph": "Andika swali lako hapa kwa lugha yoyote..."
+        "chat_ph": "Andika swaliako hapa kwa lugha yoyote..."
     }
 }
 
@@ -162,8 +162,9 @@ elif page == "🧠 Real-Time AI Management Brain":
                 3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
                 """
                 
+                # FIXED MODEL NAME FOR MASSIVE PERFORMANCE LOGS
                 completion = client.chat.completions.create(
-                    model="groq/compound",
+                    model="llama3-8b-8192",
                     messages=[{"role": "user", "content": prompt_instructions}]
                 )
                 
@@ -173,10 +174,7 @@ elif page == "🧠 Real-Time AI Management Brain":
                 
             except Exception as e:
                 st.error(f"AI Server Connection Error: {e}")
-    else:
-        st.info(text[lang]["ai_idle"])
-
-
+down
 # ==========================================
 # PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT
 # ==========================================
@@ -191,24 +189,16 @@ else:
             try:
                 client = Groq()
                 
-                # FIXED LAYER: Ujumbe umefupishwa sana hapa ili usizidi kiwango cha herufi za Groq (413 fix)
                 context_prompt = (
-                    f"You are MIKA Sales Chatbot in Kenya. "
-                    f"Data: P16 Transaction Total KSh 2.89B (Nairobi leads at 49.46%%), "
-                    f"P18 Source Total KSh 1.68B (Do not combine scopes). "
-                    f"89.87%% data lacks stockist tracking info. "
-                    f"Competitors: Samsung, LG, Ramtons, Hisense, Alyassin. "
-                    f"User Query: {user_query}. Respond professionally in language: {lang}."
+                    f"You are the MIKA Limitless Corporate Chatbot Core. "
+                    f"Electronics market assistant in Kenya. "
+                    f"Internal Figures: P16 Transaction Total KSh 2.89 Billion (Nairobi dominates at 49.46%%), "
+                    f"P18 Official Source Total KSh 1.68 Billion (NEVER combine scopes). "
+                    f"Exposure: 89.87%% of data lacks stockist info. "
+                    f"Competitors in Kenya: MIKA (Our brand), Samsung (Premium pricing, high visual ads), "
+                    f"LG Electronics (High brand equity), Ramtons (Aggressive pricing in Naivas/Quickmart), "
+                    f"Hisense (Cooling tier), Alyassin (Rural footprints). "
+                    f"User query: {user_query}. Respond fully and professionally in language: {lang}."
                 )
                 
-                completion = client.chat.completions.create(
-                    model="groq/compound",
-                    messages=[{"role": "user", "content": context_prompt}]
-                )
-                
-                st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
-                st.write("---")
-                st.markdown(completion.choices[0].message.content)
-                
-            except Exception as e:
-                st.error(f"Chatbot Communication Failure: {e}")
+                # FIXED MODEL NAME FOR LIVE PRODUCTION INTERACTIVE QUERIES

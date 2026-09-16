@@ -151,7 +151,7 @@ text_dict = {
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
         "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
-        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji wa kifedha wa haraka.",
+        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji vya kifedha wa haraka.",
         "chart1": "🌍 Uchangiaji wa Mauzo Kimkoa",
         "chart2": "💳 Masharti ya Malipo na Hali ya ukwasi wa Mtaji",
         "ai_header": "🧠 Mfumo wa Kiotomatiki wa n8n",
@@ -160,7 +160,7 @@ text_dict = {
         "ai_idle": "💡 Mfumo wa n8n: Hausumbuki. Unasubiri amri yako.",
         "chat_header": "💬 Uliza MIKA — Chatbot ya Soko la Kimataifa",
         "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu wa bidhaa nchini Kenya.",
-        "chat_ph": "Andika swaliako hapa na ubonyeze enter...",
+        "chat_ph": "Andika swali lako hapa na ubonyeze enter...",
         "chat_title": "Ya hivi majuzi"
     }
 }
@@ -273,7 +273,6 @@ if page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])
     
-    # Anwani yako halisi ya IP imewekwa hapa kikamilifu
     n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://192.168.1.87:8501")
     
     if st.button(text_dict[lang]["ai_btn"], type="primary"):

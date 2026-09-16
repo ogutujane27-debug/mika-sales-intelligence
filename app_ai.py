@@ -234,7 +234,8 @@ else:
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 
-                ai_response = completion.choices[0].message.content
+                # SULUHISHO: Tumerekebisha hapa kulingana na muundo rasmi wa mapokezi ya seva
+                ai_response = completion.choices.message.content
                 
                 # Append exchanges immediately into session arrays so the Sidebar refreshes on the spot!
                 st.session_state["chat_history"].append({"role": "user", "text": user_input_field})
@@ -253,5 +254,3 @@ else:
         st.markdown(f'<div class="user-bubble"><b>👤 You:</b> {latest_user}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA RESPONSE:</b></div>', unsafe_allow_html=True)
         st.markdown(latest_mika)
-
-            

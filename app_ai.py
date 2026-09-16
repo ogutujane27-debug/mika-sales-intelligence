@@ -172,9 +172,9 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
             """
             
-            # REPLACED: Mfumo thabiti wa modeli mpya ya Groq
+            # REPLACED: Mfumo thabiti na rasmi wa modeli mpya ya Groq ya mwaka 2026
             completion = client.chat.completions.create(
-                model="llama-3.3-70b-specdec",
+                model="openai/gpt-oss-120b",
                 messages=[{"role": "user", "content": prompt_instructions}]
             )
             
@@ -233,9 +233,9 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}. Do not mention Phase 16 or Phase 18 labels."
                 )
                 
-                # REPLACED: Mfumo thabiti wa modeli mpya ya Groq kwa ajili ya Chatbot live
+                # REPLACED: Mfumo thabiti na rasmi wa modeli mpya ya Groq ya mwaka 2026 kwa ajili ya Chatbot live
                 completion = client.chat.completions.create(
-                    model="llama-3.3-70b-specdec",
+                    model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 

@@ -209,17 +209,36 @@ if page == "🧠 Simulated n8n Orchestration Core":
     
     n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://localhost:5678/webhook/mika-data-sync")
     
-    if st.button(text_dict[lang]["ai_btn"], type="primary"):
+        if st.button(text_dict[lang]["ai_btn"], type="primary"):
         st.info("Firing outbound trigger parameters to local n8n automation lane...")
+
         try:
             payload = {
                 "source": "streamlit_command_center",
                 "region_matrix": region_csv,
                 "payment_matrix": payment_csv
             }
-            response = requests.post(n8n_url, json=payload, timeout=8)
+
+            response = requests.post(
+                n8n_url,
+                json=payload,
+                timeout=8
+            )
+
             if response.status_code == 200:
                 st.success("✅ n8n Pipeline completed execution step successfully!")
-                st.json(response.json() if response.headers.get('content-type') == 'application/json' else {"response": response.text})
-            if response.status_code != 200:
-                st.error(f"❌ Automation server returned code: {response.status_code}")
+                st.json(
+                    response.json()
+                    if response.headers.get("content-type") == "application/json"
+                    else {"response": response.text}
+                )
+            else:
+                st.error(
+                    f"❌ Automation server returned code: {response.status_code}"
+                )
+
+        except requests.exceptions.RequestException as e:
+            st.error(f"❌ Could not connect to the n8n automation server: {e}")
+
+        except Exception as e:
+            st.error(f"❌ Unexpected automation error: {e}")

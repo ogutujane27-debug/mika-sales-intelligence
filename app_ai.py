@@ -186,10 +186,10 @@ elif page == "🧠 Simulated n8n Orchestration Core":
                 messages=[{"role": "user", "content": prompt_instructions}]
             )
             
-            status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
-                        st.write("---")
+                        status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
+            st.write("---")
             
-            ai_report = completion.choices[0].message.content
+            ai_report = completion.choices.message.content
             st.markdown(ai_report)
             
             st.write("---")

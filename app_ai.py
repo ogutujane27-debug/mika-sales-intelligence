@@ -194,7 +194,6 @@ elif page == "🧠 Simulated n8n Orchestration Core":
             status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
             st.write("---")
             
-            # SULUHISHO: Tumeweka [0] hapa kuzuia 'list' object error
             ai_report = completion.choices[0].message.content
             st.markdown(ai_report)
             
@@ -222,7 +221,7 @@ elif page == "🧠 Simulated n8n Orchestration Core":
 
 
 # ==========================================
-# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT (WITH HISTORY MEMORY CORE)
+# PAGE VIEW 3: UNLIMITLESS ASK MIKA MARKET CHATBOT (WITH EMOJI CONTROL PANEL)
 # ==========================================
 else:
     st.subheader(text[lang]["chat_header"])
@@ -232,15 +231,28 @@ else:
     if "chat_history" not in st.session_state:
         st.session_state["chat_history"] = []
         
-    # Render past conversation speech bubbles on load
-    for chat in st.session_state["chat_history"]:
-        if chat["role"] == "user":
-            st.markdown(f'<div class="user-bubble"><b>👤 You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
-        else:
-            st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
-            
-    # Text input for new dynamic entries
-    user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
+    # 🗑️ THE TRASHBIN CONTROL NODE
+    col_clear, col_space = st.columns([1, 4])
+    with col_clear:
+        if st.button("🗑️ Clear Chat" if lang == "English" else "🗑️ Futa Chat"):
+            st.session_state["chat_history"] = []
+            st.rerun()
+
+    st.write("---")
+    
+    # 📊 TOP SEARCHES EMOJI PANEL
+    st.write("📌 **Top Searches / Maswali Maarufu:**" if lang == "English" else "📌 **Maswali Maarufu ya Bodi:**")
+    c_btn1, c_btn2 = st.columns(2)
+    suggested_query = ""
+    with c_btn1:
+        if st.button("🌍 Nairobi Revenue Hub Performance"):
+            suggested_query = "Analyze the Nairobi region performance and its 49.46% market share concentration."
+    with c_btn2:
+        if st.button("🥊 Samsung & Ramtons Competitor Gaps"):
+            suggested_query = "What are Samsung and Ramtons doing well in Kenya electronics market compared to MIKA?"
+
+    # Text input configuration with session state bypass
+    user_query = st.text_input(text[lang]["chat_ph"], value=suggested_query, key="global_market_chatbot")
     
     if user_query:
         with st.spinner("MIKA Core Engine is scanning market variables..."):
@@ -254,15 +266,22 @@ else:
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 
-                # SULUHISHO: Tumeweka [0] na hapa pia kuzuia 'list' object error
                 ai_response = completion.choices[0].message.content
                 
-                # Append recent exchange parameters straight into the live session history arrays
+                # Append recent exchanges to list arrays
                 st.session_state["chat_history"].append({"role": "user", "text": user_query})
                 st.session_state["chat_history"].append({"role": "mika", "text": ai_response})
-                
-                # Rerun application to display fresh speech blocks sequentially
                 st.rerun()
                 
             except Exception as e:
                 st.error(f"Chatbot Communication Failure: {e}")
+
+    # ⏳ VISUAL HISTORY TRACKER SECTION (Rendered at the bottom)
+    if st.session_state["chat_history"]:
+        st.write("---")
+        st.write("⏳ **Conversation Logs / Kumbukumbu ya Mazungumzo:**" if lang == "English" else "⏳ **Kumbukumbu ya Mazungumzo ya Siri:**")
+        for chat in st.session_state["chat_history"]:
+            if chat["role"] == "user":
+                st.markdown(f'<div class="user-bubble"><b>👤 You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)

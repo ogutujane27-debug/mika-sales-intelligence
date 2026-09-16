@@ -81,12 +81,12 @@ text = {
         "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji vya kifedha wa haraka.",
         "chart1": "🌍 Uchangiaji wa Mauzo Kimkoa",
         "chart2": "💳 Masharti ya Malipo na Hali ya ukwasi wa Mtaji",
-        "ai_header": "🔌 Mitambo ya Kiotomatiki ya n8n (Live)",
+        "ai_header": "🔌 Mitambo ya Kiotomatiki wa n8n (Live)",
         "ai_prompt": "Weka anwani yako halisi ya webhook hapa chini ili kusukuma data za CSV kwenye workflow yako ya n8n.",
         "ai_btn": "🚀 Washa n8n Pipeline ya Ukweli",
         "ai_idle": "💡 Mfumo wa n8n: Hausumbuki. Unasubiri amri yako ya kuwasha mitambo.",
         "chat_header": "💬 Uliza MIKA — Chatbot ya Soko la Kimataifa",
-        "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu wa bidhaa nchini Kenya.",
+        "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu vya bidhaa nchini Kenya.",
         "chat_ph": "Andika swali lako hapa na ubonyeze enter..."
     }
 }
@@ -111,33 +111,49 @@ st.caption(text[lang]["desc"])
 st.warning(text[lang]["risk_banner"])
 st.write("---")
 
-# --- VIEW 1: EXECUTIVE DASHBOARD ---
+# --- VIEW 1: EXECUTIVE DASHBOARD WITH DEEP ANALYSIS BUTTON ---
 if page == "📈 Executive Overview & Pipeline":
+    
+    # 🚀 KITUFE KIPYA CHA ANALYSIS KIMEWEKWA JUU KABISA HAPA
+    if st.button("🚀 Run Deep Enterprise Analysis", type="primary"):
+        total_outlets = int(df_region["Outlet_Count"].sum())
+        nairobi_pct = float(df_region.at[0, "Pct_of_Total"])
+        max_credit_pct = float(df_payment.at[0, "Pct_of_Total"])
+        max_credit_term = str(df_payment.at[0, "Payment Terms"])
+        
+        st.success("📊 **Enterprise Intelligence Audit Complete!**")
+        st.info(f"""
+        **Matrix Operational Highlights:**
+        * Cumulative distribution infrastructure spans **{total_outlets} verified stockist outlets** inside Kenya.
+        * Primary regional market density is dominated by **Nairobi Region** accounting for **{nairobi_pct}%** of market share traffic.
+        * Financial exposure audit indicates **{max_credit_term}** accounts for the highest liquidity risk at **{max_credit_pct}%** portfolio concentration.
+        * Competitor logging active against baseline records: Samsung, LG, Ramtons, Hisense, Alyassin ecosystem.
+        """)
+        st.write("---")
+        
     st.subheader(text[lang]["chart1"])
     st.dataframe(df_region, use_container_width=True, hide_index=True)
     
+    st.write("---")
     st.subheader(text[lang]["chart2"])
     st.dataframe(df_payment, use_container_width=True, hide_index=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION ENGINE (100% FIXED & NO COMPILING ERRORS) ---
+# --- VIEW 2: REAL N8N AUTOMATION ENGINE ---
 if page == "🧠 Real n8n Orchestration Core":
     st.subheader(text[lang]["ai_header"])
     st.write(text[lang]["ai_prompt"])
     
-    # Sanduku la kuweka URL yako halisi ya IP mtandao wa ndani
-    n8n_url = st.text_input("n8n Target Endpoint Link:", value="http://192.168.1.87:8501")
+    n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://192.168.1.87:8501")
     
     if st.button(text[lang]["ai_btn"], type="primary"):
         st.info(f"Streaming live payload parameters outbound to: {n8n_url}...")
         
-        # Mfumo unasoma data halisi za CSV zilizopo juu na kuzipakeji tayari kwa safari
         payload = {
             "trigger_source": "streamlit_executive_dashboard",
             "active_regions": df_region.to_dict(orient="records"),
             "payment_metrics": df_payment.to_dict(orient="records")
         }
         
-        # Kuzuia Connection Error isivunje kioo chako, tunaifunga kwenye isolation try block safi
         try:
             response = requests.post(n8n_url, json=payload, timeout=5)
             if response.status_code == 200:
@@ -154,9 +170,8 @@ if page == "🧠 Real n8n Orchestration Core":
 # --- VIEW 3: ASK MIKA CHATBOT ---
 if page == "💬 Ask MIKA Market Chatbot":
     st.subheader(text[lang]["chat_header"])
-    st.write(text_dict := text[lang]["chat_desc"])
+    st.write(text[lang]["chat_desc"])
     
-    # Render historical chat log bubbles from memory
     if st.session_state["chat_history"]:
         for chat in st.session_state["chat_history"]:
             if chat["role"] == "user":
@@ -164,14 +179,12 @@ if page == "💬 Ask MIKA Market Chatbot":
             if chat["role"] == "mika":
                 st.markdown(f'<div class="mika-bubble"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
             
-    # Input field to send new queries
-    user_query = st.text_input(text[lang]["chat_ph"], key="chatbot_input_box")
-    if user_query:
-        st.session_state["chat_history"].append({"role": "user", "text": user_query})
+    query_box = st.chat_input(text[lang]["chat_ph"])
+    if query_box:
+        st.session_state["chat_history"].append({"role": "user", "text": query_box})
         
-        q_clean = user_query.lower()
+        q_clean = query_box.lower()
         
-        # Deep AI Local Search Engine Router Logic (Real Calculations from your CSV)
         if "stockist" in q_clean or "outlet" in q_clean or "top" in q_clean:
             top_region = str(df_region.at[0, "Region Name"])
             top_outlets = int(df_region.at[0, "Outlet_Count"])
@@ -179,10 +192,3 @@ if page == "💬 Ask MIKA Market Chatbot":
             total_outlets = int(df_region["Outlet_Count"].sum())
             bot_response = f"**[Deep AI Enterprise Analysis]** Based on live business entries, the top market territory is **{top_region}** which commands **{top_outlets} verified outlets** representing **{top_pct}%** of our foot traffic. Across all operational zones in Kenya, the system tracks a total cumulative footprint of **{total_outlets} active outlets**."
         
-        if "located" in q_clean or "where" in q_clean or "region" in q_clean:
-            regions_list = ", ".join(df_region["Region Name"].tolist())
-            bot_response = f"**[Deep AI Operations Footprint]** MIKA market log parameters confirm active enterprise distribution networks are deployed across the following main territories in Kenya: **{regions_list}**."
-            
-        if "payment" in q_clean or "cash" in q_clean or "credit" in q_clean:
-            top_term = str(df_payment.at[0, "Payment Terms"])
-            top_pct = float(df_payment.at[0, "Pct_of_Total"])

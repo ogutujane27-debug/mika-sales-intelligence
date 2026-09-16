@@ -277,8 +277,6 @@ if page == "🧠 Simulated n8n Orchestration Core":
     
     if st.button(text_dict[lang]["ai_btn"], type="primary"):
         st.info(f"Firing outbound transactional payload parameters to n8n line at: {n8n_url}...")
-        
-        # Sasa hivi tumetoa ile block tata ya try/except ya ndani iliyokuwa inaleta Syntax Errors
         try:
             payload = {
                 "source": "streamlit_command_center",
@@ -289,3 +287,6 @@ if page == "🧠 Simulated n8n Orchestration Core":
             st.success("✅ n8n Pipeline completed execution step successfully!")
             st.write(response.text)
         except Exception as e:
+            st.error("❌ Connection failed or local server network is not active.")
+            with st.expander("📂 View Simulated Node Processing Payload Logs (Fallback Mode)", expanded=True):
+                st.code(f"[15:00:21] - Initializing extraction...\n[15:00:22] - Local net error trace: {str(e)}\n[15:00:25] - Safe mock pipeline loaded.", language="bash")

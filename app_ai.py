@@ -164,7 +164,7 @@ if page == "📈 Executive Overview & Pipeline":
 
     st.write("---")
     st.subheader("📁 Verified Master Region Data Register")
-    st.dataframe(df_region, use_container_width=True, hide_index=True)
+        st.dataframe(df_region, use_container_width=True, hide_index=True)
     
     st.write("---")
     raw_briefing_text = (
@@ -206,6 +206,43 @@ elif page == "🧠 Simulated n8n Orchestration Core":
         try:
             client = Groq()
             region_summary = df_region.to_string(index=False)
+            
+            prompt_instructions = f"Perform an executive-level audit business analysis on this corporate dataset for MIKA sales managers. Total Revenue: KSh 2.88B. Official Target: KSh 1.68B. Traceability Risk: 89.87%% lack stockist data. Regional Log: {region_summary}. Output must be in {lang}. Format with three headers: 1. MANAGEMENT THE WHYS, 2. WHAT-IF RISK MITIGATION, 3. STRATEGIC AUDIT ACTIONS."
+            
+            completion = client.chat.completions.create(
+                model="openai/gpt-oss-120b",
+                messages=[{"role": "user", "content": prompt_instructions}]
+            )
+            
+            status_box.success("✅ [n8n Node 4/4] Success: Board delivery report successfully compiled!")
+            st.write("---")
+            
+            # FILTED: Imeongezewa index ya [0] kuzuia hitilafu ya list object
+            ai_report = completion.choices[0].message.content
+            st.markdown(ai_report)
+            
+            st.write("---")
+            st.subheader("📱 Automated Management Broadcast Alert Payload")
+            
+            board_alert = (
+                "📢 *MIKA AUTOMATED SALES ALERT*\n\n"
+                "Dear Directors,\n"
+                "The weekly sales data audit has been compiled successfully via automation.\n\n"
+                "💰 *Key Portfolio Performance:*\n"
+                "- Total Verified Revenue: KSh 2.89 Billion.\n"
+                "- Nairobi Hub Market Share: 49.46%.\n\n"
+                "⚠️ *Critical Data Tracking Alert:*\n"
+                "- 89.87% lack identified stockist data. Requires immediate automation controls.\n\n"
+                "🌐 Deployed Control Center: https://streamlit.app"
+            )
+            
+            st.text_area("📋 Copy-Ready Message Block for WhatsApp / Board Email Broadcast:", value=board_alert, height=210)
+            
+        except Exception as e:
+            st.error(f"AI Server Connection Error: {e}")
+    else:
+        st.info(text[lang]["ai_idle"])
+
 
 # ==========================================
 # PAGE VIEW 3: DYNAMIC ASK MIKA CHATBOT (CLEAN INTERFACE WITH SIDEBAR HISTORY LOGS)
@@ -234,8 +271,8 @@ else:
                     messages=[{"role": "user", "content": context_prompt}]
                 )
                 
-                # SULUHISHO: Tumerekebisha hapa kulingana na muundo rasmi wa mapokezi ya seva
-                ai_response = completion.choices.message.content
+                # FILTED: Imeongezewa index ya [0] kuzuia hitilafu ya list object kwenye chatbot pia
+                ai_response = completion.choices[0].message.content
                 
                 # Append exchanges immediately into session arrays so the Sidebar refreshes on the spot!
                 st.session_state["chat_history"].append({"role": "user", "text": user_input_field})

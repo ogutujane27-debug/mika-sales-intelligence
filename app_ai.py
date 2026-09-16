@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -413,4 +412,3 @@ if page == "💬 Ask MIKA Market Chatbot":
             "MIKA chatbot response engine is ready for connection "
             "to your AI provider."
         )
-```

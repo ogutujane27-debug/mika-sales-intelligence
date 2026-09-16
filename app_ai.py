@@ -184,7 +184,6 @@ else:
     st.subheader(text[lang]["chat_header"])
     st.write(text[lang]["chat_desc"])
     
-    # MAREKEBISHO YA TYPO: st.text_input sasa imenyooka safi bila kujirudia!
     user_query = st.text_input(text[lang]["chat_ph"], key="global_market_chatbot")
     
     if user_query:
@@ -192,12 +191,13 @@ else:
             try:
                 client = Groq()
                 
-                context_prompt = f"""
-                You are the MIKA Limitless Corporate Chatbot Core. You serve as a world-class electronics market research agent, logistics analyst, and strategy consultant in Kenya.
-                You are speaking directly to executive managers and multinational partners. 
-                
-                You have comprehensive access to internal enterprise figures:
-                - Transaction Total (Phase 16): KSh 2.89 Billion (Nairobi dominates at KSh 1.43B, equal to 49.46% of transaction sales).
-                - Official Source Total (Phase 18): KSh 1.68 Billion. (Strict reporting rule: NEVER combine these scopes).
-                - Tracking Exposure: 89.87% (KSh 2.60B) of transaction rows lack stockist data.
-                
+                # FIXED BLOCK: Muundo salama usio na f-string ndefu inayovuruga mabano ya kodi
+                context_prompt = (
+                    "You are the MIKA Limitless Corporate Chatbot Core, a world-class electronics market research agent, logistics analyst, and strategy consultant in Kenya.\n"
+                    "You are speaking to executive managers and Asian multinational partners.\n"
+                    "Internal Figures:\n"
+                    "- Transaction Total (Phase 16): KSh 2.89 Billion (Nairobi dominates at 49.46%).\n"
+                    "- Official Source Total (Phase 18): KSh 1.68 Billion (NEVER combine these separate scopes!).\n"
+                    "- Tracking Exposure: 89.87% (KSh 2.60B) of data lacks stockist info.\n\n"
+                    "Market Landscape & Competitor Brand Knowledge:\n"
+                    "- MIKA: Our brand, strong Nairobi presence, needs stockist automation.\n"

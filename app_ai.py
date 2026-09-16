@@ -3,22 +3,75 @@ import pandas as pd
 import plotly.express as px
 import io
 import requests
-from groq import Groq  # Unganisho halisi la Groq AI layer
+from groq import Groq
 
 # =====================================================================
-# 1. SYSTEM INITIALIZATION & GOOGLE SIDEBAR STYLE
+# 1. CORE ENTERPRISE INITIALIZATION & GOOGLE SIDEBAR CSS STYLING
 # =====================================================================
 st.set_page_config(page_title="MIKA Global Market Intelligence", layout="wide")
 
 st.markdown("""
     <style>
+    /* Ficha muundo wa kawaida wa kurasa za Streamlit Nav */
     [data-testid="stSidebarNav"] {display: none;}
-    .google-brand { font-size: 24px; font-weight: 500; color: #1a73e8; font-family: 'Google Sans', sans-serif; margin-bottom: 25px; padding-left: 8px; }
-    .google-menu-item { font-size: 15px; color: #3c4043; padding: 8px 8px; display: flex; align-items: center; gap: 14px; }
-    .google-section-title { font-size: 13px; font-weight: 500; color: #70757a; margin-top: 20px; margin-bottom: 10px; padding-left: 8px; }
-    .google-history-item { font-size: 14px; color: #3c4043; padding: 6px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .chat-user-row { background-color: #e2f0d9; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; font-family: sans-serif; }
-    .chat-mika-row { background-color: #f1f1f1; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #1a73e8; color: #222222; font-family: sans-serif; }
+    
+    /* Mtindo wa Upau Vaux Pembeni wa Google (Google Sidebar Styling) */
+    .google-brand {
+        font-size: 24px;
+        font-weight: 500;
+        color: #1a73e8;
+        font-family: 'Google Sans', 'Segoe UI', Arial, sans-serif;
+        margin-bottom: 25px;
+        padding-left: 8px;
+    }
+    
+    /* Mistari ya amri yenye ikoni ndogo (Google Menu Item Style) */
+    .google-menu-item {
+        font-size: 15px;
+        color: #3c4043;
+        font-family: sans-serif;
+        padding: 10px 8px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    .google-menu-item:hover {
+        background-color: #f1f3f4;
+    }
+    
+    .google-section-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: #70757a;
+        margin-top: 25px;
+        margin-bottom: 12px;
+        padding-left: 8px;
+    }
+    
+    /* Orodha ya vitu vilivyotafutwa hivi karibuni */
+    .google-history-item {
+        font-size: 14px;
+        color: #3c4043;
+        padding: 8px 8px;
+        margin-bottom: 2px;
+        border-radius: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .google-history-item:hover {
+        background-color: #f1f3f4;
+        cursor: pointer;
+    }
+    
+    /* Mapovu mapya ya Chat ya Ask MIKA */
+    .chat-user-row { background-color: #e2f0d9; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; color: #1e3d14; }
+    .chat-mika-row { background-color: #f1f1f1; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #1a73e8; color: #222222; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -47,19 +100,43 @@ df_payment = pd.read_csv(io.StringIO(payment_csv))
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
 if "search_logs" not in st.session_state:
-    st.session_state["search_logs"] = []
+    st.session_state["search_logs"] = [
+        "i want to start a new project as i l...",
+        "what's up i'm not getting any fee...",
+        "how to use postman tool on my l...",
+        "can you outline the differences b..."
+    ]
 
+# ZILE MA-WHYS NA TEXTS ZAKO ZOTE ZA MWANZO KUKAMILIKA (100% Restored)
 text_dict = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
         "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
-        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data.",
+        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data. This is a tracking concern, not an immediate financial loss.",
+        "chart1": "🌍 Regional Market Share & Contribution",
+        "chart2": "💳 Credit Terms & Liquidity Exposure Pipeline",
+        "ai_header": "🧠 Simulated n8n Automation & Audit Engine",
+        "ai_prompt": "Activate the simulated backend node pipeline to clean raw records and stream insights.",
+        "ai_btn": "🚀 Trigger Local n8n Orchestration Pipeline",
+        "ai_idle": "💡 Local n8n Simulator Core: Idle. Pipeline waiting for execution command.",
+        "chat_header": "💬 Ask MIKA — Limitless Market Intelligence Chatbot",
+        "chat_desc": "Ask any business, competitor (Samsung, LG, Ramtons, Hisense, Alyassin), supply chain, stockout, or market query related to Kenya.",
+        "chat_ph": "Type your query here and press enter...",
         "chat_title": "Ya hivi majuzi"
     },
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
         "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
-        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum.",
+        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji wa kifedha wa haraka.",
+        "chart1": "🌍 Uchangiaji wa Mauzo Kimkoa",
+        "chart2": "💳 Masharti ya Malipo na Hali ya ukwasi wa Mtaji",
+        "ai_header": "🧠 Mfumo wa Kiotomatiki wa n8n",
+        "ai_prompt": "Washa mfumo wa n8n kusafisha data na kutoa ripoti.",
+        "ai_btn": "🚀 Washa n8n Pipeline ya Ndani",
+        "ai_idle": "💡 Mfumo wa n8n: Hausumbuki. Unasubiri amri yako.",
+        "chat_header": "💬 Uliza MIKA — Chatbot ya Soko la Kimataifa",
+        "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu wa bidhaa nchini Kenya.",
+        "chat_ph": "Andika swali lako hapa na ubonyeze enter...",
         "chat_title": "Ya hivi majuzi"
     }
 }
@@ -72,8 +149,8 @@ with st.sidebar:
     lang = st.radio("Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
     st.write("---")
     
-    # Secure API Entry Point kwenye Sidebar ili pasivuje
-    groq_api_key = st.text_input("Groq API Key:", type="password", help="Weka Groq API Key yako hapa")
+    # Kibox cha kuweka API Key kimehifadhiwa kwa salama
+    groq_api_key = st.text_input("Groq API Key:", type="password", help="Weka Groq API Key yako")
     st.write("---")
     
     st.markdown('<div class="google-menu-item">📝 Mazungumzo mapya</div>', unsafe_allow_html=True)
@@ -104,7 +181,7 @@ with st.sidebar:
         st.rerun()
 
 # =====================================================================
-# 4. PRIMARY MAIN PANEL CONTROLLER (100% REAL-TIME LIVE)
+# 4. PRIMARY MAIN PANEL CONTROLLER (NO ELSE BLOCKS AT ALL)
 # =====================================================================
 st.title(text_dict[lang]["title"])
 st.caption(text_dict[lang]["desc"])
@@ -113,88 +190,36 @@ st.write("---")
 
 # --- VIEW 1: EXECUTIVE OVERVIEW ---
 if page == "📈 Executive Overview & Pipeline":
-    st.header("🌍 Regional Market Share & Contribution")
+    st.header(text_dict[lang]["chart1"])
     st.dataframe(df_region, use_container_width=True, hide_index=True)
     
-    fig_region = px.bar(df_region, x="Region Name", y="Total_Sales", color="Region Name", title="Sales Volume per Territory", template="plotly_white")
+    fig_region = px.bar(df_region, x="Region Name", y="Total_Sales", color="Region Name", title="Visual representation of Sales Volume per Territory", template="plotly_white")
     st.plotly_chart(fig_region, use_container_width=True)
     
     st.write("---")
-    st.header("💳 Credit Terms & Liquidity Exposure Pipeline")
+    st.header(text_dict[lang]["chart2"])
     st.dataframe(df_payment, use_container_width=True, hide_index=True)
     
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N WEBHOOK OPERATION LAYER ---
+# --- VIEW 2: REAL N8N CORE AUTOMATION ---
 if page == "🧠 Simulated n8n Orchestration Core":
-    st.subheader("🔌 Live n8n Webhook Node Connection")
+    st.subheader(text_dict[lang]["ai_header"])
+    st.write(text_dict[lang]["ai_prompt"])
+    
     n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://localhost:5678/webhook/mika-data-sync")
     
-    if st.button("🚀 Execute Live n8n Pipeline", type="primary"):
+    if st.button(text_dict[lang]["ai_btn"], type="primary"):
         st.info("Firing outbound trigger parameters to local n8n automation lane...")
         try:
-            # Kutuma data kamili halisi ya CSV kwenda n8n node!
             payload = {
                 "source": "streamlit_command_center",
                 "region_matrix": region_csv,
                 "payment_matrix": payment_csv
             }
             response = requests.post(n8n_url, json=payload, timeout=8)
-            
             if response.status_code == 200:
                 st.success("✅ n8n Pipeline completed execution step successfully!")
                 st.json(response.json() if response.headers.get('content-type') == 'application/json' else {"response": response.text})
             else:
-                st.error(f"❌ Automation server returned code: {response.status_code}")
-        except Exception as e:
-            st.error(f"⚠️ Could not hit active n8n listener node: {str(e)}")
-
-# --- VIEW 3: DYNAMIC CHATBOT DRIVEN BY REAL DATA & GROQ LLM LAYER ---
-if page == "💬 Ask MIKA Market Chatbot":
-    st.subheader("💬 Ask MIKA — Dynamic AI Market Intelligence Chatbot")
-    
-    if not groq_api_key:
-        st.info("🔑 Please enter your Groq API Key in the sidebar input block to start chatting with real data layers.")
-    
-    if groq_api_key:
-        # Display history rows neatly
-        for chat in st.session_state["chat_history"]:
-            if chat["role"] == "user":
-                st.markdown(f'<div class="chat-user-row"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
-            if chat["role"] == "mika":
-                st.markdown(f'<div class="chat-mika-row"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
-                
-        query_box = st.chat_input("Ask about sales logs, stockists, regions, or liquidity...")
-        if query_box:
-            short_log = query_box[:28] + "..." if len(query_box) > 28 else query_box
-            if short_log not in st.session_state["search_logs"]:
-                st.session_state["search_logs"].insert(0, short_log)
-                
-            st.session_state["chat_history"].append({"role": "user", "text": query_box})
-            
-            try:
-                # Kuanzisha Groq client na kuipandishia data zote za kampuni ili isipike uongo!
-                client = Groq(api_key=groq_api_key)
-                
-                system_context = f"""
-                You are MIKA, a market intelligence expert chatbot for enterprise sales tracking in Kenya.
-                You analyze local market records, supply chains, stockouts, and competitors.
-                Here is the real business dataset to ground your analysis perfectly (Do not hallucinate or make up false values):
-                
-                REGIONAL SALES POOL DATA:
-                {region_csv}
-                
-                PAYMENT TERMS & CREDIT PIPELINE:
-                {payment_csv}
-                
-                Provide sharp, concise, executive-level business answers using this data. Speak like a professional data strategist.
-                """
-                
-                chat_completion = client.chat.completions.create(
-                    messages=[
-                        {"role": "system", "content": system_context},
-                        {"role": "user", "content": query_box}
-                    ],
-                    model="llama3-8b-8192",
-                    temperature=0.2

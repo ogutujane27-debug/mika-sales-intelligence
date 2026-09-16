@@ -162,7 +162,6 @@ elif page == "🧠 Real-Time AI Management Brain":
                 3. STRATEGIC AUDIT ACTIONS (3 immediate corporate mandates for the executive board).
                 """
                 
-                # REPLACED: Mfumo thabiti na rasmi wa modeli mpya ya Groq ya mwaka 2026
                 completion = client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": prompt_instructions}]
@@ -170,7 +169,8 @@ elif page == "🧠 Real-Time AI Management Brain":
                 
                 st.success("Analysis Successfully Compiled!")
                 st.write("---")
-                st.markdown(completion.choices.message.content)
+                # MAREKEBISHO YA USHINDI: Tumeweka [0] hapa kuzuia 'list' object error
+                st.markdown(completion.choices[0].message.content)
                 
             except Exception as e:
                 st.error(f"AI Server Connection Error: {e}")
@@ -204,7 +204,6 @@ else:
                     f"User query: {user_query}. Respond fully and professionally in language: {lang}."
                 )
                 
-                # REPLACED: Mfumo thabiti na rasmi wa modeli mpya ya Groq ya mwaka 2026 kwa ajili ya Chatbot live
                 completion = client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": context_prompt}]
@@ -212,7 +211,8 @@ else:
                 
                 st.success("MIKA Market Core Response:" if lang == "English" else "Majibu ya Akili ya MIKA:")
                 st.write("---")
-                st.markdown(completion.choices.message.content)
+                # MAREKEBISHO YA USHINDI: Tumeweka [0] na hapa pia kuzuia 'list' object error
+                st.markdown(completion.choices[0].message.content)
                 
             except Exception as e:
                 st.error(f"Chatbot Communication Failure: {e}")

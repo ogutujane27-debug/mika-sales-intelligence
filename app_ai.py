@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 import io
 import requests
-from groq import Groq
 
 # =====================================================================
 # 1. CORE ENTERPRISE INITIALIZATION & GOOGLE SIDEBAR CSS STYLING
@@ -160,7 +159,7 @@ text_dict = {
         "ai_btn": "🚀 Washa n8n Pipeline ya Ndani",
         "ai_idle": "💡 Mfumo wa n8n: Hausumbuki. Unasubiri amri yako.",
         "chat_header": "💬 Uliza MIKA — Chatbot ya Soko la Kimataifa",
-        "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu wa bidhaa nchini Kenya.",
+        "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu Guild bidhaa nchini Kenya.",
         "chat_ph": "Andika swali lako hapa na ubonyeze enter...",
         "chat_title": "Ya hivi majuzi"
     }
@@ -269,19 +268,21 @@ if page == "📈 Executive Overview & Pipeline":
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION ENGINE LINKED TO REAL IP TARGET ---
+# --- VIEW 2: REAL N8N AUTOMATION OPERATION (Mstari wa 294 Umeratibiwa Safi) ---
 if page == "🧠 Simulated n8n Orchestration Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])
     
     n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://192.168.1.87:8501")
     
-    response_success = False
-    response_data = ""
-    response_code = 0
-    
     if st.button(text_dict[lang]["ai_btn"], type="primary"):
         st.info(f"Firing outbound transactional payload parameters to n8n line at: {n8n_url}...")
+        
+        # We initialized parameters outside try/except layer to keep blocks clean
+        response_code = 0
+        response_data = ""
+        is_error = False
+        
         try:
             payload = {
                 "source": "streamlit_command_center",
@@ -289,6 +290,3 @@ if page == "🧠 Simulated n8n Orchestration Core":
                 "payment_matrix": payment_csv
             }
             response = requests.post(n8n_url, json=payload, timeout=8)
-            response_code = response.status_code
-            if response.status_code == 200:
-                response_success = True

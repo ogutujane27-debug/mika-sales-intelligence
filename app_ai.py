@@ -222,6 +222,7 @@ elif page == "💬 Ask MIKA Market Chatbot":
     for chat in st.session_state["chat_history"]:
         if chat["role"] == "user":
             st.markdown(f'<div class="chat-user-row"><b>You:</b> {chat["text"]}</div>', unsafe_allow_html=True)
+           
             st.markdown(f'<div class="chat-mika-row"><b>🤖 MIKA:</b> {chat["text"]}</div>', unsafe_allow_html=True)
             
         query_box = st.chat_input("Ask any business or competitor query here...")

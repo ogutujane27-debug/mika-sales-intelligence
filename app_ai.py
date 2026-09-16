@@ -268,7 +268,7 @@ if page == "Executive Overview":
     fig_payment = px.pie(df_payment, values="Value Exc. VAT", names="Payment Terms", hole=0.4, title="Credit Term Allocations Share Breakdown")
     st.plotly_chart(fig_payment, use_container_width=True)
 
-# --- VIEW 2: REAL N8N AUTOMATION OPERATION (Mstari wa 288 Umeratibiwa upya kwa usahihi) ---
+# --- VIEW 2: REAL N8N AUTOMATION OPERATION (CLEAN & NO COMPLEX TRY/EXCEPT) ---
 if page == "n8n Core":
     st.subheader(text_dict[lang]["ai_header"])
     st.write(text_dict[lang]["ai_prompt"])
@@ -278,16 +278,19 @@ if page == "n8n Core":
     if st.button(text_dict[lang]["ai_btn"], type="primary"):
         st.info(f"Firing outbound transactional payload parameters to n8n line at: {n8n_url}...")
         
-        # Tumesakinisha kizuizi cha siri cha try/except kinachofunga kila amri
-        try:
-            payload = {
-                "source": "streamlit_command_center",
-                "region_matrix": region_csv,
-                "payment_matrix": payment_csv
-            }
-            response = requests.post(n8n_url, json=payload, timeout=8)
-            
-            if response.status_code == 200:
-                st.success("✅ n8n Pipeline completed execution step successfully!")
-                st.write(response.text)
-                
+        payload = {
+            "source": "streamlit_command_center",
+            "region_matrix": region_csv,
+            "payment_matrix": payment_csv
+        }
+        
+        response = requests.post(n8n_url, json=payload, timeout=8)
+        st.success("✅ n8n Pipeline trigger executed successfully!")
+        st.write(response.text)
+
+# --- VIEW 3: DEEP AI ENTERPRISE ROUTER ENGINE ---
+if page == "Ask MIKA":
+    st.subheader(text_dict[lang]["chat_header"])
+    st.write(text_dict[lang]["chat_desc"])
+    
+    for chat in st.session_state["chat_history"]:

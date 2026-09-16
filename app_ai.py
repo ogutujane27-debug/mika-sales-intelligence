@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit st
 import pandas as pd
 import plotly.express as px
 import io
@@ -97,7 +97,6 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
-# Initialize session arrays safely
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
 if "search_logs" not in st.session_state:
@@ -223,3 +222,4 @@ if page == "🧠 Simulated n8n Orchestration Core":
                 st.success("✅ n8n Pipeline completed execution step successfully!")
                 st.json(response.json() if response.headers.get('content-type') == 'application/json' else {"response": response.text})
             if response.status_code != 200:
+                st.error(f"❌ Automation server returned code: {response.status_code}")

@@ -191,17 +191,15 @@ else:
             try:
                 client = Groq()
                 
+                # FIXED LAYER: Ujumbe umefupishwa sana hapa ili usizidi kiwango cha herufi za Groq (413 fix)
                 context_prompt = (
-                    f"You are the MIKA Limitless Corporate Chatbot Core. "
-                    f"Electronics market assistant in Kenya. "
-                    f"Internal Figures: P16 Transaction Total KSh 2.89 Billion (Nairobi dominates at 49.46%%), "
-                    f"P18 Official Source Total KSh 1.68 Billion (NEVER combine scopes). "
-                    f"Exposure: 89.87%% of data lacks stockist info. "
-                    f"Competitors in Kenya: MIKA (Our brand), Samsung (Premium pricing, high visual ads), "
-                    f"LG Electronics (High brand equity), Ramtons (Aggressive pricing in Naivas/Quickmart), "
-                    f"Hisense (Cooling tier), Alyassin (Rural footprints). "
-                    f"User query: {user_query}. Respond fully and professionally in language: {lang}."
-                ) # <--- HAPA NDIYO ALAMA YA FUNGA MABANO YA ) ILIYOKUWA IMESAHAULIKA!
+                    f"You are MIKA Sales Chatbot in Kenya. "
+                    f"Data: P16 Transaction Total KSh 2.89B (Nairobi leads at 49.46%%), "
+                    f"P18 Source Total KSh 1.68B (Do not combine scopes). "
+                    f"89.87%% data lacks stockist tracking info. "
+                    f"Competitors: Samsung, LG, Ramtons, Hisense, Alyassin. "
+                    f"User Query: {user_query}. Respond professionally in language: {lang}."
+                )
                 
                 completion = client.chat.completions.create(
                     model="groq/compound",

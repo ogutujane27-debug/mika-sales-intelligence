@@ -1,3 +1,5 @@
+
+App · PY
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -182,6 +184,12 @@ text = {
     },
 }
  
+# Use a plain (non-agentic) Groq model everywhere. "groq/compound" runs its
+# own hidden web-search/tool-use steps, which can balloon the actual request
+# size Groq has to process and trigger a 413 "request_too_large" error even
+# for a short question.
+GROQ_MODEL = "llama-3.3-70b-versatile"
+ 
 # =====================================================================
 # 5. HELPERS
 # =====================================================================
@@ -353,7 +361,7 @@ elif page == pages[1]:
                 """
  
                 completion = client.chat.completions.create(
-                    model="groq/compound",
+                    model=GROQ_MODEL,
                     messages=[{"role": "user", "content": prompt_instructions}],
                 )
  
@@ -362,7 +370,13 @@ elif page == pages[1]:
                 st.markdown(completion.choices[0].message.content)
  
             except Exception as e:
-                st.error(f"AI Server Connection Error: {e}")
+                if "request_too_large" in str(e) or "413" in str(e):
+                    st.error(
+                        "⚠️ That request was too large for the AI service to process. "
+                        "Try again — this can happen occasionally with larger prompts."
+                    )
+                else:
+                    st.error(f"AI Server Connection Error: {e}")
     else:
         st.info(text[lang]["ai_idle"])
  
@@ -468,7 +482,7 @@ else:
                     specific (e.g. live competitor pricing), say so rather than inventing numbers.
                     """
                     completion = client.chat.completions.create(
-                        model="groq/compound",
+                        model=GROQ_MODEL,
                         messages=[
                             {"role": "system", "content": system_context},
                             {"role": "user", "content": user_query},
@@ -476,7 +490,13 @@ else:
                     )
                     reply = completion.choices[0].message.content
                 except Exception as e:
-                    reply = f"AI Server Connection Error: {e}"
+                    if "request_too_large" in str(e) or "413" in str(e):
+                        reply = (
+                            "⚠️ That request was too large for the AI service to process. "
+                            "Try asking a shorter, more specific question."
+                        )
+                    else:
+                        reply = f"AI Server Connection Error: {e}"
  
         st.session_state["chat_history"].append({"role": "assistant", "content": reply})
         st.markdown(f'<div class="mika-bubble">{reply}</div>', unsafe_allow_html=True)

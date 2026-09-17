@@ -27,7 +27,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-```python
 # ================================================================
 # VIEW 2: REAL N8N ORCHESTRATION CORE
 # ================================================================
@@ -519,4 +518,3 @@ if page == "💬 Ask MIKA Market Chatbot":
 
             # Refresh screen to show new response
             st.rerun()
-```

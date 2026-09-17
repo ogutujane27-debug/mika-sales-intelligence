@@ -2,7 +2,14 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import io
+import os
 import requests
+
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
 
 # =====================================================================
 # 1. ENTERPRISE SUITE INITIALIZATION & PREMIUM CSS STYLING
@@ -85,6 +92,14 @@ Cash before Delivery,54073554.13,25.2
 df_region = pd.read_csv(io.StringIO(region_csv))
 df_payment = pd.read_csv(io.StringIO(payment_csv))
 
+# Top-line reporting totals (kept separate on purpose — transactional vs.
+# official-source scopes must never be summed together).
+TRANSACTIONAL_TOTAL = 2_888_966_390.88
+TRANSACTIONAL_RECORDS = 266
+OFFICIAL_SOURCE_TOTAL = 1_684_717_184.70
+UNTRACKED_STOCKIST_PCT = 89.87
+UNTRACKED_STOCKIST_VALUE = 2_600_000_000  # KSh 2.60B, as reported
+
 # =====================================================================
 # 3. SESSION STATE
 # =====================================================================
@@ -94,6 +109,9 @@ if "chat_history" not in st.session_state:
 if "enterprise_analysis_run" not in st.session_state:
     st.session_state["enterprise_analysis_run"] = False
 
+if "n8n_last_response" not in st.session_state:
+    st.session_state["n8n_last_response"] = None
+
 # =====================================================================
 # 4. LANGUAGE DICTIONARY
 # =====================================================================
@@ -101,31 +119,63 @@ text = {
     "English": {
         "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
         "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
-        "m1": "📦 Total Verified Revenue",
-        "m2": "📈 Official Source Target",
+        "m1": "📦 Total Transactional Revenue",
+        "m2": "📈 Official Source Total",
+        "m1_status": f"{TRANSACTIONAL_RECORDS} records verified",
+        "m2_status": "Statutory / audited scope",
         "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data. This is a tracking concern, not an immediate financial loss.",
         "chart1": "🌍 Regional Market Share & Contribution",
         "chart2": "💳 Credit Terms & Liquidity Exposure Pipeline",
-        "ai_header": "🔌 Real n8n Orchestration Core Engine",
-        "ai_prompt": "Enter your active n8n webhook endpoint to send the enterprise intelligence payload into your workflow.",
-        "ai_btn": "🚀 Execute Live n8n Pipeline",
-        "ai_idle": "💡 Real n8n Connection Core: Waiting for outbound execution trigger input.",
-        "chat_header": "💬 Ask MIKA — Limitless Market Intelligence Chatbot",
+        "nav_label": "Select Dashboard View:",
+        "pages": [
+            "📈 Executive Overview & Pipeline",
+            "🧠 AI Business Brain (Groq)",
+            "🔌 Real n8n Orchestration Core",
+            "💬 Ask MIKA Market Chatbot",
+        ],
+        "ai_header": "🧠 Real-Time AI Management Brain Screen",
+        "ai_prompt_msg": "Click the button below to stream localized management insights directly from the AI server.",
+        "ai_btn": "🚀 Run Deep Enterprise Analysis (AI)",
+        "ai_idle": "💡 AI service ready. Click the button to analyze the data pools.",
+        "n8n_header": "🔌 Real n8n Orchestration Core Engine",
+        "n8n_prompt": "Enter your active n8n webhook endpoint to send the enterprise intelligence payload into your workflow.",
+        "n8n_btn": "🚀 Execute Live n8n Pipeline",
+        "n8n_idle": "💡 Real n8n Connection Core: Waiting for outbound execution trigger input.",
+        "n8n_input_label": "n8n Webhook URL",
+        "n8n_sent": "✅ Payload sent successfully.",
+        "n8n_error": "❌ Could not reach the n8n webhook.",
+        "chat_header": "💬 Ask MIKA — Market Intelligence Chatbot",
         "chat_desc": "Ask any business, competitor (Samsung, LG, Ramtons, Hisense, Alyassin), supply chain, stockout, or market query related to Kenya.",
         "chat_ph": "Type your query here and press enter...",
     },
     "Kiswahili": {
         "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
         "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
-        "m1": "📦 Jumla ya Mapato Yaliyothibitishwa",
-        "m2": "📈 Lengo Rasmi la Mauzo",
-        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji vya kifedha wa haraka.",
+        "m1": "📦 Jumla ya Mapato ya Miamala",
+        "m2": "📈 Jumla ya Chanzo Rasmi",
+        "m1_status": f"Rekodi {TRANSACTIONAL_RECORDS} zimethibitishwa",
+        "m2_status": "Wigo rasmi / uliokaguliwa",
+        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 (89.87%) za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji wa kifedha wa haraka.",
         "chart1": "🌍 Uchangiaji wa Mauzo Kimkoa",
         "chart2": "💳 Masharti ya Malipo na Hali ya Ukwasi",
-        "ai_header": "🔌 Mitambo ya Kiotomatiki wa n8n (Live)",
-        "ai_prompt": "Weka anwani halisi ya webhook ya n8n ili kutuma data ya biashara kwenye workflow yako.",
-        "ai_btn": "🚀 Washa n8n Pipeline ya Ukweli",
-        "ai_idle": "💡 Mfumo wa n8n: Unasubiri amri yako ya kuwasha workflow.",
+        "nav_label": "Chagua Mtazamo wa Dashboard:",
+        "pages": [
+            "📈 Muhtasari wa Utendaji",
+            "🧠 Ubongo wa AI (Groq)",
+            "🔌 Mtambo wa n8n (Live)",
+            "💬 Uliza MIKA Chatbot",
+        ],
+        "ai_header": "🧠 Seva ya Uchambuzi ya AI ya Muda Halisi",
+        "ai_prompt_msg": "Bonyeza kitufe kilicho chini ili kupokea muhtasari wa kiutendaji kutoka kwenye seva ya AI.",
+        "ai_btn": "🚀 Washa Uchambuzi wa AI",
+        "ai_idle": "💡 Seva ya AI iko tayari. Bonyeza kitufe ili AI isome mifumo ya data.",
+        "n8n_header": "🔌 Mitambo ya Kiotomatiki wa n8n (Live)",
+        "n8n_prompt": "Weka anwani halisi ya webhook ya n8n ili kutuma data ya biashara kwenye workflow yako.",
+        "n8n_btn": "🚀 Washa n8n Pipeline ya Ukweli",
+        "n8n_idle": "💡 Mfumo wa n8n: Unasubiri amri yako ya kuwasha workflow.",
+        "n8n_input_label": "Anwani ya Webhook ya n8n",
+        "n8n_sent": "✅ Data imetumwa kikamilifu.",
+        "n8n_error": "❌ Imeshindikana kufikia webhook ya n8n.",
         "chat_header": "💬 Uliza MIKA — Chatbot ya Ujasusi wa Soko",
         "chat_desc": "Uliza kuhusu biashara, washindani, usambazaji, stockout, au soko la Kenya.",
         "chat_ph": "Andika swali lako hapa na ubonyeze enter...",
@@ -133,7 +183,40 @@ text = {
 }
 
 # =====================================================================
-# 5. SIDEBAR MULTI-PAGE ENGINE
+# 5. HELPERS
+# =====================================================================
+def get_groq_api_key():
+    """Pull the Groq key from Streamlit secrets first, then env var.
+    Never hardcode a real key in source — it ends up in git history
+    and any public repo."""
+    key = None
+    if hasattr(st, "secrets"):
+        try:
+            key = st.secrets["GROQ_API_KEY"]
+        except Exception:
+            key = None
+    if not key:
+        key = os.environ.get("GROQ_API_KEY")
+    return key
+
+
+def build_dataset_summary():
+    """Compute the live figures used across the AI / chatbot prompts,
+    so the narrative always matches whatever is in df_region/df_payment."""
+    total_outlets = int(df_region["Outlet_Count"].sum())
+    nairobi_row = df_region.iloc[0]
+    coast_row = df_region.iloc[1]
+    max_credit_row = df_payment.loc[df_payment["Value Exc. VAT"].idxmax()]
+    return {
+        "total_outlets": total_outlets,
+        "nairobi_row": nairobi_row,
+        "coast_row": coast_row,
+        "max_credit_row": max_credit_row,
+    }
+
+
+# =====================================================================
+# 6. SIDEBAR MULTI-PAGE ENGINE
 # =====================================================================
 with st.sidebar:
     st.header("⚡ Command Center")
@@ -146,100 +229,232 @@ with st.sidebar:
 
     st.write("---")
 
-    page = st.radio(
-        "Select Dashboard View:" if lang == "English" else "Chagua Mtazamo:",
-        [
-            "📈 Executive Overview & Pipeline",
-            "🧠 Real n8n Orchestration Core",
-            "💬 Ask MIKA Market Chatbot",
-        ],
-    )
+    page = st.radio(text[lang]["nav_label"], text[lang]["pages"])
 
     st.write("---")
     st.caption("MIKA Automation Infrastructure Layer Active.")
 
 # =====================================================================
-# 6. MAIN DISPLAY FRAME
+# 7. MAIN DISPLAY FRAME
 # =====================================================================
 st.title(text[lang]["title"])
 st.caption(text[lang]["desc"])
 st.warning(text[lang]["risk_banner"])
+
+col_m1, col_m2 = st.columns(2)
+with col_m1:
+    st.metric(
+        label=text[lang]["m1"],
+        value=f"KSh {TRANSACTIONAL_TOTAL:,.2f}",
+        delta=text[lang]["m1_status"],
+    )
+with col_m2:
+    st.metric(
+        label=text[lang]["m2"],
+        value=f"KSh {OFFICIAL_SOURCE_TOTAL:,.2f}",
+        delta=text[lang]["m2_status"],
+    )
+
 st.write("---")
+
+pages = text[lang]["pages"]
 
 # =====================================================================
 # VIEW 1: EXECUTIVE OVERVIEW & PIPELINE
 # =====================================================================
-if page == "📈 Executive Overview & Pipeline":
+if page == pages[0]:
 
-    if st.button(
-        "🚀 Run Deep Enterprise Analysis",
-        type="primary",
-        key="deep_enterprise_analysis",
-    ):
-        total_outlets = int(df_region["Outlet_Count"].sum())
-        nairobi_pct = float(df_region.at[0, "Pct_of_Total"])
-        nairobi_sales = float(df_region.at[0, "Total_Sales"])
-        coast_sales = float(df_region.at[1, "Total_Sales"])
-        max_credit_pct = float(df_payment.at[0, "Pct_of_Total"])
-        max_credit_term = str(df_payment.at[0, "Payment Terms"])
+    if st.button("🚀 Run Deep Enterprise Analysis", type="primary", key="deep_enterprise_analysis"):
+        summary = build_dataset_summary()
+        nairobi_row = summary["nairobi_row"]
+        coast_row = summary["coast_row"]
+        max_credit_row = summary["max_credit_row"]
 
         st.session_state["enterprise_analysis_run"] = True
-        st.success("📊 Deep Enterprise Intelligence Audit Complete!")
+        st.success("📊 Enterprise Intelligence Audit Complete!")
 
         st.info(
             f"""
 **Comprehensive Matrix & Operational Analytics:**
 
-* **Territory Infrastructure:** Our footprint actively covers **{total_outlets} verified stockist outlets** distributed strategically across East Africa.
-* **Regional Volume Leader:** **Nairobi Region** commands the primary density, pulling a massive **KSh {nairobi_sales:,.2f}** which accounts for **{nairobi_pct}%** of all transactional operations.
-* **Secondary Operations Center:** **Coast Region** tracks as the secondary volume node with an aggregate footprint of **KSh {coast_sales:,.2f}** (16.20% Share share).
-* **Liquidity & Credit Exposure Pipeline:** Financial audit shows severe exposure in credit terms. **{max_credit_term}** accounts for the absolute highest portfolio concentration at **{max_credit_pct}%** of all allocations, presenting a critical working capital cycle loop.
-* **Competitor Environment Intelligence:** Live monitoring parameters log active retail matching independent variables against market leaders: **Samsung, LG, Ramtons, Hisense, and Alyassin** distribution channels.
+* **Territory Infrastructure:** Our footprint actively covers **{summary['total_outlets']} verified stockist outlets** distributed strategically across Kenya.
+* **Regional Volume Leader:** {nairobi_row['Region Name'].title()} commands the primary density, pulling **KSh {nairobi_row['Total_Sales']:,.2f}**, accounting for **{nairobi_row['Pct_of_Total']}%** of all transactional operations.
+* **Secondary Operations Center:** {coast_row['Region Name'].title()} tracks as the secondary volume node with **KSh {coast_row['Total_Sales']:,.2f}** ({coast_row['Pct_of_Total']}% share).
+* **Liquidity & Credit Exposure Pipeline:** **{max_credit_row['Payment Terms']}** accounts for the highest portfolio concentration at **{max_credit_row['Pct_of_Total']}%** of all allocations — a critical working-capital cycle to monitor.
+* **Competitor Environment:** Positioning is tracked against market leaders Samsung, LG, Ramtons, Hisense, and Alyassin.
 """
         )
 
     st.write("---")
-    st.subheader(text[lang]["chart1"])
+    col_g1, col_g2 = st.columns(2)
+    with col_g1:
+        st.subheader(text[lang]["chart1"])
+        fig1 = px.pie(
+            df_region, names="Region Name", values="Total_Sales", hole=0.5,
+            color_discrete_sequence=px.colors.qualitative.Plotly,
+        )
+        fig1.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10))
+        st.plotly_chart(fig1, use_container_width=True)
 
-    st.dataframe(
-        df_region,
-        use_container_width=True,
-        hide_index=True,
-    )
+    with col_g2:
+        st.subheader(text[lang]["chart2"])
+        fig2 = px.bar(
+            df_payment, x="Payment Terms", y="Value Exc. VAT", text_auto=".2s",
+            color="Value Exc. VAT", color_continuous_scale="Cividis",
+        )
+        fig2.update_layout(height=380, showlegend=False, margin=dict(l=10, r=10, t=30, b=10))
+        st.plotly_chart(fig2, use_container_width=True)
 
     st.write("---")
-    st.subheader(text[lang]["chart2"])
-
-    st.dataframe(
-        df_payment,
-        use_container_width=True,
-        hide_index=True,
-    )
+    st.subheader("📁 Verified Master Region Register")
+    st.dataframe(df_region, use_container_width=True, hide_index=True)
+    st.subheader("📁 Payment Terms Register")
+    st.dataframe(df_payment, use_container_width=True, hide_index=True)
 
 # =====================================================================
-# VIEW 2: REAL N8N ORCHESTRATION CORE
+# VIEW 2: AI BUSINESS BRAIN (GROQ)
 # =====================================================================
-if page == "🧠 Real n8n Orchestration Core":
+elif page == pages[1]:
     st.subheader(text[lang]["ai_header"])
-    st.write(text[lang]["ai_prompt"])
-    
-    n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://192.168.1.87:8501")
-    
-    if st.button(text[lang]["ai_btn"], type="primary", key="n8n_execution_btn"):
-        st.info(f"Streaming live payload parameters outbound to: {n8n_url}...")
-        
-        payload = {
-            "trigger_source": "streamlit_executive_dashboard",
-            "active_regions": df_region.to_dict(orient="records"),
-            "payment_metrics": df_payment.to_dict(orient="records")
-        }
-        
-        try:
-            response = requests.post(n8n_url, json=payload, timeout=8)
-            if response.status_code == 200:
-                st.success("✅ n8n Pipeline completed execution step successfully!")
-                st.write(response.text)
-            if response.status_code != 200:
-                st.error(f"❌ Automation server returned code: {response.status_code}")
-        except Exception as e:
-            st.error("❌ Network Timeout Error: Streamlit Cloud cannot ping your local network IP.")
+    st.write(text[lang]["ai_prompt_msg"])
+
+    if not GROQ_AVAILABLE:
+        st.error("The `groq` package isn't installed. Run: pip install groq")
+    elif st.button(text[lang]["ai_btn"]):
+        with st.spinner("Streaming calculations from AI core..."):
+            try:
+                groq_api_key = get_groq_api_key()
+                if not groq_api_key:
+                    st.error(
+                        "No Groq API key found. Add GROQ_API_KEY to "
+                        ".streamlit/secrets.toml (locally) or your app's Secrets "
+                        "(Streamlit Cloud), or set it as an environment variable."
+                    )
+                    st.stop()
+
+                client = Groq(api_key=groq_api_key)
+                summary = build_dataset_summary()
+
+                prompt_instructions = f"""
+                Perform an executive-level audit business analysis on this specific corporate dataset for MIKA sales managers.
+                Dataset Overview:
+                Transactional Analysis Total: KSh {TRANSACTIONAL_TOTAL:,.2f} across {TRANSACTIONAL_RECORDS} records.
+                Official Source Total: KSh {OFFICIAL_SOURCE_TOTAL:,.2f}.
+                Data Quality Issue: KSh {UNTRACKED_STOCKIST_VALUE:,.0f} ({UNTRACKED_STOCKIST_PCT}%) of sales lack stockist tracking data.
+                Total verified stockist outlets: {summary['total_outlets']}.
+                Regional breakdown: {region_csv}
+                Payment terms breakdown: {payment_csv}
+
+                You must output your complete analysis in {lang}. If lang is English, use standard corporate English. If lang is Kiswahili, write professionally in Kiswahili.
+                Format your response into three specific, bolded markdown sections:
+                1. MANAGEMENT THE WHYS: Explain why transactional analysis and official source totals must stay completely separate and why Nairobi dominates.
+                2. WHAT-IF RISK MITIGATION: Analyze what happens if we fix the stockist data-quality traceability gap for Nairobi's sales pool.
+                3. STRATEGIC AUDIT ACTIONS: Provide 3 immediate administrative actions for the management board.
+                """
+
+                completion = client.chat.completions.create(
+                    model="groq/compound",
+                    messages=[{"role": "user", "content": prompt_instructions}],
+                )
+
+                st.success("Analysis Successfully Compiled!")
+                st.write("---")
+                st.markdown(completion.choices[0].message.content)
+
+            except Exception as e:
+                st.error(f"AI Server Connection Error: {e}")
+    else:
+        st.info(text[lang]["ai_idle"])
+
+# =====================================================================
+# VIEW 3: REAL N8N ORCHESTRATION CORE
+# =====================================================================
+elif page == pages[2]:
+    st.subheader(text[lang]["n8n_header"])
+    st.write(text[lang]["n8n_prompt"])
+
+    webhook_url = st.text_input(text[lang]["n8n_input_label"], placeholder="https://your-n8n-instance/webhook/...")
+
+    if st.button(text[lang]["n8n_btn"]):
+        if not webhook_url:
+            st.error("Please enter a valid n8n webhook URL first.")
+        else:
+            summary = build_dataset_summary()
+            payload = {
+                "transactional_total": TRANSACTIONAL_TOTAL,
+                "transactional_records": TRANSACTIONAL_RECORDS,
+                "official_source_total": OFFICIAL_SOURCE_TOTAL,
+                "untracked_stockist_pct": UNTRACKED_STOCKIST_PCT,
+                "total_outlets": summary["total_outlets"],
+                "region_breakdown": df_region.to_dict(orient="records"),
+                "payment_terms_breakdown": df_payment.to_dict(orient="records"),
+                "language": lang,
+            }
+            with st.spinner("Sending payload to n8n..."):
+                try:
+                    response = requests.post(webhook_url, json=payload, timeout=15)
+                    response.raise_for_status()
+                    st.session_state["n8n_last_response"] = response.text
+                    st.success(text[lang]["n8n_sent"])
+                except requests.exceptions.RequestException as e:
+                    st.error(f"{text[lang]['n8n_error']} ({e})")
+
+    if st.session_state["n8n_last_response"]:
+        st.write("---")
+        st.subheader("Last n8n Response")
+        st.code(st.session_state["n8n_last_response"])
+    elif not webhook_url:
+        st.info(text[lang]["n8n_idle"])
+
+# =====================================================================
+# VIEW 4: ASK MIKA MARKET CHATBOT
+# =====================================================================
+else:
+    st.subheader(text[lang]["chat_header"])
+    st.write(text[lang]["chat_desc"])
+
+    for msg in st.session_state["chat_history"]:
+        css_class = "user-bubble" if msg["role"] == "user" else "mika-bubble"
+        st.markdown(f'<div class="{css_class}">{msg["content"]}</div>', unsafe_allow_html=True)
+
+    user_query = st.chat_input(text[lang]["chat_ph"])
+
+    if user_query:
+        st.session_state["chat_history"].append({"role": "user", "content": user_query})
+        st.markdown(f'<div class="user-bubble">{user_query}</div>', unsafe_allow_html=True)
+
+        if not GROQ_AVAILABLE:
+            reply = "The `groq` package isn't installed, so I can't reach the AI backend right now."
+        else:
+            groq_api_key = get_groq_api_key()
+            if not groq_api_key:
+                reply = (
+                    "No Groq API key found. Add GROQ_API_KEY to your Streamlit secrets "
+                    "or environment variables to enable this chatbot."
+                )
+            else:
+                try:
+                    client = Groq(api_key=groq_api_key)
+                    summary = build_dataset_summary()
+                    system_context = f"""
+                    You are MIKA's market intelligence assistant for Kenya's appliance retail sector.
+                    Known context: transactional total KSh {TRANSACTIONAL_TOTAL:,.2f} across {TRANSACTIONAL_RECORDS} records,
+                    official source total KSh {OFFICIAL_SOURCE_TOTAL:,.2f}, {summary['total_outlets']} verified stockist outlets,
+                    {UNTRACKED_STOCKIST_PCT}% of transaction sales lack stockist tracking data.
+                    Competitors tracked: Samsung, LG, Ramtons, Hisense, Alyassin.
+                    Answer in {lang}. Be concise and business-focused. If you don't know something
+                    specific (e.g. live competitor pricing), say so rather than inventing numbers.
+                    """
+                    completion = client.chat.completions.create(
+                        model="groq/compound",
+                        messages=[
+                            {"role": "system", "content": system_context},
+                            {"role": "user", "content": user_query},
+                        ],
+                    )
+                    reply = completion.choices[0].message.content
+                except Exception as e:
+                    reply = f"AI Server Connection Error: {e}"
+
+        st.session_state["chat_history"].append({"role": "assistant", "content": reply})
+        st.markdown(f'<div class="mika-bubble">{reply}</div>', unsafe_allow_html=True)

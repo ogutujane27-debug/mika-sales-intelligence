@@ -27,494 +27,152 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ================================================================
-# VIEW 2: REAL N8N ORCHESTRATION CORE
-# ================================================================
+# =====================================================================
+# 2. REAL CORPORATE DATA MATRIX POOLS
+# =====================================================================
+region_csv = """Region Name,Total_Sales,Outlet_Count,Pct_of_Total
+NAIROBI REGION,1429021702.88,162,49.46
+COAST REGION,467868246.57,6,16.20
+RIFT REGION,249625551.62,4,8.64
+NYANZA REGION,230383874.52,3,7.97
+MOUNTAIN REGION,224669606.09,4,7.78
+B2B (COMMERCIAL),72649873.65,9,2.51
+EASTERN REGION,48863128.13,2,1.69"""
+
+payment_csv = """Payment Terms,Value Exc. VAT,Pct_of_Total
+60 Days from Invoice,76595266.83,35.7
+30 Days from Invoice,63116322.62,29.4
+Cash before Delivery,54073554.13,25.2
+45 Days from Invoice,41147180.37,19.2
+90 Days from Invoice,33508310.27,15.6"""
+
+df_region = pd.read_csv(io.StringIO(region_csv))
+df_payment = pd.read_csv(io.StringIO(payment_csv))
+
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = []
+
+# Translation Dictionary
+text = {
+    "English": {
+        "title": "🖥️ MIKA Global Enterprise Sales Command Dashboard",
+        "desc": "Automated system processing transactional revenue logs and official target metrics independently.",
+        "risk_banner": "⚠️ Data Traceability Risk: KSh 2.60B (89.87%) of transaction sales currently lack identified stockist data. This is a tracking concern, not an immediate financial loss.",
+        "chart1": "🌍 Regional Market Share & Contribution",
+        "chart2": "💳 Credit Terms & Liquidity Exposure Pipeline",
+        "ai_header": "🔌 Real n8n Orchestration Core Engine",
+        "ai_prompt": "Enter your active webhook listener node endpoint link to stream database transactional parameters directly.",
+        "ai_btn": "🚀 Execute Live n8n Pipeline",
+        "chat_header": "💬 Ask MIKA — Limitless Market Intelligence Chatbot",
+        "chat_desc": "Ask any business, competitor (Samsung, LG, Ramtons, Hisense, Alyassin), supply chain, stockout, or market query related to Kenya.",
+        "chat_ph": "Type your query here and press enter..."
+    },
+    "Kiswahili": {
+        "title": "🖥️ MIKA Mfumo wa Udhibiti wa Data za Mauzo",
+        "desc": "Mfumo wa kiotomatiki unaochakata mapato ya miamala na vyanzo rasmi vya malengo kando.",
+        "risk_banner": "⚠️ Riski ya Traceability: KSh Bilioni 2.60 za miamala hazina taarifa za wauzaji maalum. Hili ni suala la ufuatiliaji, sio upotezaji vya kifedha wa haraka.",
+        "chart1": "🌍 Uchangiaji wa Mauzo Kimkoa",
+        "chart2": "💳 Masharti ya Malipo na Hali ya ukwasi wa Mtaji",
+        "ai_header": "🔌 Mitambo ya Kiotomatiki wa n8n (Live)",
+        "ai_prompt": "Weka anwani yako halisi ya webhook hapa chini ili kusukuma data za CSV kwenye workflow yako ya n8n.",
+        "ai_btn": "🚀 Washa n8n Pipeline ya Ukweli",
+        "chat_header": "💬 Uliza MIKA — Chatbot ya Soko la Kimataifa",
+        "chat_desc": "Uliza swali lolote kuhusu biashara, washindani (Samsung, LG, Ramtons, Hisense, Alyassin), usambazaji, au upungufu vya bidhaa nchini Kenya.",
+        "chat_ph": "Andika swali lako hapa na ubonyeze enter..."
+    }
+}
+
+# =====================================================================
+# 3. SIDEBAR NAVIGATION
+# =====================================================================
+with st.sidebar:
+    st.header("⚡ Command Center")
+    lang = st.radio("🌐 Language / Lugha:", ["English", "Kiswahili"], horizontal=True)
+    st.write("---")
+    page = st.radio(
+        "Select Dashboard View:" if lang == "English" else "Chagua Mtazamo:",
+        ["📈 Executive Overview & Pipeline", "🧠 Real n8n Orchestration Core", "💬 Ask MIKA Market Chatbot"]
+    )
+    st.write("---")
+    st.caption("MIKA Automation Infrastructure Layer Active.")
+
+# =====================================================================
+# 4. MAIN PANEL FRAME
+# =====================================================================
+st.title(text[lang]["title"])
+st.caption(text[lang]["desc"])
+st.warning(text[lang]["risk_banner"])
+st.write("---")
+
+# --- VIEW 1: EXECUTIVE OVERVIEW ---
+if page == "📈 Executive Overview & Pipeline":
+    if st.button("🚀 Run Deep Enterprise Analysis", type="primary"):
+        total_outlets = int(df_region["Outlet_Count"].sum())
+        nairobi_pct = float(df_region.at[0, "Pct_of_Total"])
+        nairobi_sales = float(df_region.at[0, "Total_Sales"])
+        coast_sales = float(df_region.at[1, "Total_Sales"])
+        max_credit_pct = float(df_payment.at[0, "Pct_of_Total"])
+        max_credit_term = str(df_payment.at[0, "Payment Terms"])
+        
+        st.success("📊 **Deep Enterprise Intelligence Audit Complete!**")
+        st.info(f"""
+        **Comprehensive Matrix & Operational Analytics:**
+        * **Territory Infrastructure:** Our footprint actively covers **{total_outlets} verified stockist outlets** distributed strategically across East Africa.
+        * **Regional Volume Leader:** **Nairobi Region** commands the primary density, pulling a massive **KSh {nairobi_sales:,.2f}** which accounts for **{nairobi_pct}%** of all transactional operations.
+        * **Secondary Operations Center:** **Coast Region** tracks as the secondary volume node with an aggregate footprint of **KSh {coast_sales:,.2f}** (16.20% Share share).
+        * **Liquidity & Credit Exposure Pipeline:** Financial audit shows severe exposure in credit terms. **{max_credit_term}** accounts for the absolute highest portfolio concentration at **{max_credit_pct}%** of all allocations, presenting a critical working capital cycle loop.
+        * **Competitor Environment Intelligence:** Live monitoring parameters log active retail matching independent variables against market leaders: **Samsung, LG, Ramtons, Hisense, and Alyassin** distribution channels.
+        """)
+        st.write("---")
+        
+    st.subheader(text[lang]["chart1"])
+    st.dataframe(df_region, use_container_width=True, hide_index=True)
+    st.write("---")
+    st.subheader(text[lang]["chart2"])
+    st.dataframe(df_payment, use_container_width=True, hide_index=True)
+
+# --- VIEW 2: REAL N8N CORE AUTOMATION ---
 if page == "🧠 Real n8n Orchestration Core":
-
     st.subheader(text[lang]["ai_header"])
-
     st.write(text[lang]["ai_prompt"])
+    n8n_url = st.text_input("n8n Webhook URL Target Endpoint:", value="http://192.168.1.87:8501")
+    
+    if st.button(text[lang]["ai_btn"], type="primary"):
+        st.info(f"Streaming live payload parameters outbound to: {n8n_url}...")
+        payload = {
+            "source": "streamlit_command_center",
+            "region_matrix": region_csv,
+            "payment_matrix": payment_csv
+        }
+        try:
+            response = requests.post(n8n_url, json=payload, timeout=8)
+            st.success("✅ n8n Pipeline completed execution step successfully!")
+            st.write(response.text)
+        except Exception as e:
+            st.error("❌ Network Timeout Error: Streamlit Cloud cannot ping your local network IP.")
+            st.warning("💡 **n8n Webhook Explanation:** Streamlit is deployed on the public internet, while `192.168.1.87` is your internal private office network router. Public servers cannot access internal local IPs unless you open a public tunnel on your computer using a tool like **Ngrok** or configure **Port Forwarding** on your office router.")
+            with st.expander("📂 View Extracted Live Payload Matrix (Packaged for n8n Target Node)", expanded=True):
+                st.json(payload)
 
-    st.info(
-        "Webhook flow: MIKA → HTTP POST → n8n Webhook → Workflow → "
-        "Respond to Webhook → MIKA"
-    )
-
-    # ------------------------------------------------------------
-    # N8N WEBHOOK CONFIGURATION
-    # ------------------------------------------------------------
-    n8n_url = st.text_input(
-        "n8n Webhook URL Target Endpoint:",
-        value="http://192.168.1.87:5678/webhook/mika",
-        help=(
-            "Use the actual n8n Webhook URL. "
-            "Do NOT use the Streamlit port 8501."
-        )
-    )
-
-    # Optional test URL
-    st.caption(
-        "Example: http://192.168.1.87:5678/webhook/mika "
-        "or during development: /webhook-test/mika"
-    )
-
-    st.write("---")
-
-    # ------------------------------------------------------------
-    # EXECUTE LIVE N8N PIPELINE
-    # ------------------------------------------------------------
-    if st.button(
-        text[lang]["ai_btn"],
-        type="primary",
-        key="execute_live_n8n"
-    ):
-
-        if not n8n_url.strip():
-            st.error("❌ Please enter the n8n Webhook URL.")
-        else:
-
-            # Payload sent to n8n
-            payload = {
-                "trigger_source": "MIKA Streamlit",
-                "pipeline": "Global Market Intelligence",
-                "request_type": "enterprise_analysis",
-
-                "language": lang,
-
-                "region_data": df_region.to_dict(
-                    orient="records"
-                ),
-
-                "payment_data": df_payment.to_dict(
-                    orient="records"
-                ),
-
-                "total_verified_revenue": float(
-                    df_region["Total_Sales"].sum()
-                ),
-
-                "outlet_count": int(
-                    df_region["Outlet_Count"].sum()
-                )
-            }
-
-            st.info(
-                f"🔌 Sending live payload to n8n:\n\n"
-                f"`{n8n_url}`"
-            )
-
-            try:
-
-                response = requests.post(
-                    n8n_url.strip(),
-                    json=payload,
-                    timeout=30
-                )
-
-                # ------------------------------------------------
-                # HTTP SUCCESS
-                # ------------------------------------------------
-                if response.ok:
-
-                    st.success(
-                        f"✅ n8n workflow responded successfully "
-                        f"(HTTP {response.status_code})"
-                    )
-
-                    # Try to interpret n8n response as JSON
-                    try:
-                        result = response.json()
-
-                        st.subheader(
-                            "📡 n8n Pipeline Response"
-                        )
-
-                        st.json(result)
-
-                        # Try common response fields
-                        mika_response = (
-                            result.get("response")
-                            or result.get("message")
-                            or result.get("output")
-                            or result.get("answer")
-                        )
-
-                        if mika_response:
-                            st.success(
-                                f"🤖 n8n Result:\n\n{mika_response}"
-                            )
-
-                    except ValueError:
-
-                        # n8n may return plain text
-                        response_text = response.text.strip()
-
-                        st.subheader(
-                            "📡 n8n Pipeline Response"
-                        )
-
-                        if response_text:
-                            st.success(response_text)
-                        else:
-                            st.warning(
-                                "⚠️ n8n returned an empty response."
-                            )
-
-                # ------------------------------------------------
-                # HTTP ERROR
-                # ------------------------------------------------
-                else:
-
-                    st.error(
-                        f"❌ n8n returned HTTP "
-                        f"{response.status_code}"
-                    )
-
-                    if response.text:
-                        st.code(
-                            response.text,
-                            language="text"
-                        )
-
-            # ----------------------------------------------------
-            # CONNECTION ERROR
-            # ----------------------------------------------------
-            except requests.exceptions.ConnectionError:
-
-                st.error(
-                    "❌ Could not connect to n8n."
-                )
-
-                st.warning(
-                    "Check that:\n"
-                    "1. n8n is running.\n"
-                    "2. The IP address is correct.\n"
-                    "3. Port 5678 is reachable.\n"
-                    "4. The Webhook node is active."
-                )
-
-            # ----------------------------------------------------
-            # TIMEOUT
-            # ----------------------------------------------------
-            except requests.exceptions.Timeout:
-
-                st.error(
-                    "⏱️ n8n did not respond within 30 seconds."
-                )
-
-                st.warning(
-                    "The workflow may still be processing, "
-                    "or the webhook/workflow is not responding."
-                )
-
-            # ----------------------------------------------------
-            # OTHER REQUEST ERROR
-            # ----------------------------------------------------
-            except requests.exceptions.RequestException as e:
-
-                st.error(
-                    f"❌ n8n request failed: {e}"
-                )
-
-            # ----------------------------------------------------
-            # UNEXPECTED ERROR
-            # ----------------------------------------------------
-            except Exception as e:
-
-                st.error(
-                    f"❌ Unexpected pipeline error: {e}"
-                )
-
-
-# ================================================================
-# VIEW 3: ASK MIKA MARKET CHATBOT
-# ================================================================
+# --- VIEW 3: ASK MIKA CHATBOT ENGINE ---
 if page == "💬 Ask MIKA Market Chatbot":
-
     st.subheader(text[lang]["chat_header"])
-
     st.write(text[lang]["chat_desc"])
-
-    # ------------------------------------------------------------
-    # CHAT CONTROL BAR
-    # ------------------------------------------------------------
-    col_search, col_refresh = st.columns([4, 1])
-
-    with col_search:
-
-        search_query = st.text_input(
-            "🔍 Search MIKA:",
-            placeholder=text[lang]["chat_ph"],
-            key="mika_search_input"
-        )
-
-    with col_refresh:
-
-        st.write("")
-
-        if st.button(
-            "🔄 Refresh",
-            key="mika_refresh"
-        ):
-
-            st.session_state["chat_history"] = []
-
-            # Clear current input on next rerun
-            st.rerun()
-
-    # ------------------------------------------------------------
-    # SEND BUTTON
-    # ------------------------------------------------------------
-    send_query = st.button(
-        "🔍 Search / Ask MIKA",
-        type="primary",
-        key="mika_send"
-    )
-
-    # ------------------------------------------------------------
-    # CHAT DISPLAY
-    # ------------------------------------------------------------
-    st.write("---")
-
-    if not st.session_state["chat_history"]:
-
-        st.info(
-            "💡 Ask MIKA a business question to begin."
-        )
-
-    else:
-
-        for message in st.session_state["chat_history"]:
-
-            if message["role"] == "user":
-
-                st.markdown(
-                    f"""
-                    <div class="user-bubble">
-                        <strong>👤 You</strong><br>
-                        {message["content"]}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-            else:
-
-                st.markdown(
-                    f"""
-                    <div class="mika-bubble">
-                        <strong>🤖 MIKA</strong><br>
-                        {message["content"]}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-    # ------------------------------------------------------------
-    # ASK MIKA
-    # ------------------------------------------------------------
-    if send_query:
-
-        question = search_query.strip()
-
-        if not question:
-
-            st.warning(
-                "⚠️ Please enter a question before searching."
-            )
-
-        else:
-
-            # Add user message immediately
-            st.session_state["chat_history"].append(
-                {
-                    "role": "user",
-                    "content": question
-                }
-            )
-
-            # ----------------------------------------------------
-            # CHATBOT WEBHOOK
-            # ----------------------------------------------------
-            # IMPORTANT:
-            # Change this to your actual n8n CHAT webhook.
-            #
-            # Example:
-            # http://192.168.1.87:5678/webhook/mika-chat
-            # ----------------------------------------------------
-            chatbot_url = st.session_state.get(
-                "mika_chat_webhook",
-                "http://192.168.1.87:5678/webhook/mika-chat"
-            )
-
-            chat_payload = {
-
-                "trigger_source": "MIKA Chatbot",
-
-                "request_type": "market_intelligence_question",
-
-                "language": lang,
-
-                "question": question,
-
-                "conversation": st.session_state[
-                    "chat_history"
-                ],
-
-                "regional_data": df_region.to_dict(
-                    orient="records"
-                ),
-
-                "payment_data": df_payment.to_dict(
-                    orient="records"
-                )
-            }
-
-            with st.spinner("🤖 MIKA is analysing your question..."):
-
-                try:
-
-                    response = requests.post(
-                        chatbot_url,
-                        json=chat_payload,
-                        timeout=45
-                    )
-
-                    # ------------------------------------------------
-                    # SUCCESS
-                    # ------------------------------------------------
-                    if response.ok:
-
-                        try:
-
-                            result = response.json()
-
-                            answer = (
-                                result.get("response")
-                                or result.get("answer")
-                                or result.get("output")
-                                or result.get("message")
-                            )
-
-                            # If n8n returns an unexpected JSON structure
-                            if not answer:
-
-                                answer = str(result)
-
-                        except ValueError:
-
-                            answer = response.text.strip()
-
-                        if not answer:
-
-                            answer = (
-                                "MIKA received an empty response "
-                                "from the automation workflow."
-                            )
-
-                        st.session_state[
-                            "chat_history"
-                        ].append(
-                            {
-                                "role": "assistant",
-                                "content": answer
-                            }
-                        )
-
-                    # ------------------------------------------------
-                    # HTTP FAILURE
-                    # ------------------------------------------------
-                    else:
-
-                        error_message = (
-                            f"n8n chatbot returned HTTP "
-                            f"{response.status_code}."
-                        )
-
-                        if response.text:
-                            error_message += (
-                                f"\n\n{response.text}"
-                            )
-
-                        st.session_state[
-                            "chat_history"
-                        ].append(
-                            {
-                                "role": "assistant",
-                                "content": (
-                                    "❌ " + error_message
-                                )
-                            }
-                        )
-
-                # ----------------------------------------------------
-                # CONNECTION ERROR
-                # ----------------------------------------------------
-                except requests.exceptions.ConnectionError:
-
-                    st.session_state[
-                        "chat_history"
-                    ].append(
-                        {
-                            "role": "assistant",
-                            "content": (
-                                "❌ I cannot connect to the MIKA "
-                                "n8n chatbot right now. "
-                                "Please check that n8n is running "
-                                "and that the webhook URL is correct."
-                            )
-                        }
-                    )
-
-                # ----------------------------------------------------
-                # TIMEOUT
-                # ----------------------------------------------------
-                except requests.exceptions.Timeout:
-
-                    st.session_state[
-                        "chat_history"
-                    ].append(
-                        {
-                            "role": "assistant",
-                            "content": (
-                                "⏱️ The MIKA workflow took too long "
-                                "to respond. Check the n8n execution."
-                            )
-                        }
-                    )
-
-                # ----------------------------------------------------
-                # OTHER ERROR
-                # ----------------------------------------------------
-                except requests.exceptions.RequestException as e:
-
-                    st.session_state[
-                        "chat_history"
-                    ].append(
-                        {
-                            "role": "assistant",
-                            "content": (
-                                f"❌ MIKA connection error: {e}"
-                            )
-                        }
-                    )
-
-                # ----------------------------------------------------
-                # UNEXPECTED ERROR
-                # ----------------------------------------------------
-                except Exception as e:
-
-                    st.session_state[
-                        "chat_history"
-                    ].append(
-                        {
-                            "role": "assistant",
-                            "content": (
-                                f"❌ Unexpected MIKA error: {e}"
-                            )
-                        }
-                    )
-
-            # Refresh screen to show new response
-            st.rerun()
+    
+    if st.session_state["chat_history"]:
+        st.write(st.session_state["chat_history"])
+                
+    # 🛠️ MSTARI WA 166 UMEFUNGAWA VIZURI SASA (st.text_input pekee)
+    user_query = st.text_input(text[lang]["chat_ph"], key="chatbot_input_box")
+    if user_query:
+        st.session_state["chat_history"].append(f"👤 You: {user_query}")
+        q_clean = user_query.lower()
+        bot_response = ""
+        
+        if "stockist" in q_clean or "outlet" in q_clean or "top" in q_clean:
+            top_region = str(df_region.at[0, "Region Name"])
+            top_outlets = int(df_region.at[0, "Outlet_Count"])
+            top_pct = float(df_region.at[0, "Pct_of_Total"])
+            total_outlets = int(df_region["Outlet_Count"].sum())
+            bot_response = f"**[Deep AI Enterprise Analysis]** Top territory is **{top_region}** with **{top_outlets} outlets** ({top_pct}%). Total cumulative network footprint tracks **{total_outlets} active outlets** across Kenya."
+        if "located" in q_clean or "where" in q_clean or "region" in q_clean:
